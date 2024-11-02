@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Manager</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+    <h2>Home Page - Brand List</h2>
+    <!-- Include the reusable navigation menu -->
+    <div th:insert="~{'/fragments/menu' :: menu}"></div>
+</header>
+
+<section>
+    <h3>Existing Brand Names</h3>
+
+    <table class="brand-table">
+        <thead>
+        <tr>
+            <th>Brand Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="brandName : ${brandNames}">
+            <td><a th:href="@{'/brandnamedetails/' + ${brandName}}" th:text="${brandName}"></a></td>  <!-- Brand Name -->
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

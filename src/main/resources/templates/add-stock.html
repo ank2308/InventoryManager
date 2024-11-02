@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Stock Data</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+    <h2>Add Stock Data</h2>
+    <div th:insert="~{'/fragments/menu' :: menu}"></div>
+</header>
+
+<form id="stockForm">
+
+    <label for="brandType">Brand Type:</label>
+    <select id="brandType" name="brandType" onchange="fetchBrandNames()">
+        <option value="" disabled selected>Select Brand Type</option>
+        <option th:each="type : ${brandTypes}" th:value="${type}" th:text="${type}"></option>
+    </select>
+
+    <label for="brandName">Brand Name:</label>
+    <select id="brandName" name="brandName" disabled>
+        <option value="" disabled selected>Select Brand Name</option>
+    </select>
+
+    <label for="crateLotSize">Crate Lot Size</label>
+    <input type="number" id="crateLotSize" name="crateLotSize" placeholder="Enter crate lot size" required>
+
+    <label for="crateQuantity">Crate Quantity</label>
+    <input type="number" id="crateQuantity" name="crateQuantity" placeholder="Enter crate quantity" required>
+
+    <label for="liquorQuantity">Liquor Quantity</label>
+    <input type="number" id="liquorQuantity" name="liquorQuantity" placeholder="Enter liquor quantity" required>
+
+    <label for="mrp">MRP</label>
+    <input type="number" step="0.01" id="mrp" name="mrp" placeholder="Enter MRP" required>
+
+    <label for="marginPrice">Margin Price</label>
+    <input type="number" step="0.01" id="marginPrice" name="marginPrice" placeholder="Enter margin price" required>
+
+    <label for="dateOfMg">Date of Manufacturing</label>
+    <input type="date" id="dateOfMg" name="dateOfMg" required>
+
+    <label for="dateEntered">Date Entered</label>
+    <input type="date" id="dateEntered" name="dateEntered" required>
+
+    <button type="submit">Submit</button>
+</form>
+
+
+
+<script src="/script.js"></script>
+</body>
+</html>

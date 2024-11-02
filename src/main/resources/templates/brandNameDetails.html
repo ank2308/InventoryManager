@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Details</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+    <h2>Brand Details</h2>
+    <div th:insert="~{'/fragments/menu' :: menu}"></div>
+</header>
+
+<section>
+    <h3>Details for Brand: <span th:text="${brandName}"></span></h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Brand Name</th>
+            <th>Brand Type</th>
+            <th>Total Crate Lot Size</th>
+            <th>Total Liquor Quantity</th>
+            <th>Total Liquor Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Thymeleaf code to display brand details -->
+        <tr>
+            <td th:text="${stockDetails.brandName}"></td>
+            <td th:text="${stockDetails.brandType}"></td>
+            <td th:text="${stockDetails.totalCrateLotQuantity}"></td>
+            <td th:text="${stockDetails.totalLiquorQuantity}"></td>
+            <td th:text="${stockDetails.totalPrice}"></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<script src="/script.js"></script>
+</body>
+</html>
