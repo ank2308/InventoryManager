@@ -13,43 +13,165 @@
     <div th:insert="~{'/fragments/menu' :: menu}"></div>
 </header>
 
+
+<div class="form-container">
+
 <form id="stockForm">
 
-    <label for="brandType">Brand Type:</label>
-    <select id="brandType" name="brandType" onchange="fetchBrandNames()">
-        <option value="" disabled selected>Select Brand Type</option>
-        <option th:each="type : ${brandTypes}" th:value="${type}" th:text="${type}"></option>
-    </select>
+    <div class="form-group">
+        <label for="brandType">Brand Type:</label>
+        <select id="brandType" name="brandType" onchange="fetchBrandNames()">
+            <option value="" disabled selected>Select Brand Type</option>
+            <option th:each="type : ${brandTypes}" th:value="${type}" th:text="${type}"></option>
+        </select>
+    </div>
 
+    <div class="form-group">
     <label for="brandName">Brand Name:</label>
     <select id="brandName" name="brandName" disabled>
         <option value="" disabled selected>Select Brand Name</option>
     </select>
+    </div>
 
+        <div class="form-group">
     <label for="crateLotSize">Crate Lot Size</label>
     <input type="number" id="crateLotSize" name="crateLotSize" placeholder="Enter crate lot size" required>
+        </div>
 
+            <div class="form-group">
     <label for="crateQuantity">Crate Quantity</label>
     <input type="number" id="crateQuantity" name="crateQuantity" placeholder="Enter crate quantity" required>
+            </div>
 
-    <label for="liquorQuantity">Liquor Quantity</label>
-    <input type="number" id="liquorQuantity" name="liquorQuantity" placeholder="Enter liquor quantity" required>
+                <div class="form-group">
+    <label for="liquorQuantityInCrate">Liquor Quantity In Crate</label>
+    <input type="number" id="liquorQuantityInCrate" name="liquorQuantityInCrate" placeholder="Enter liquor quantity" required>
+                </div>
 
-    <label for="mrp">MRP</label>
+    <div class="form-group">
+        <label for="mrp">MRP</label>
     <input type="number" step="0.01" id="mrp" name="mrp" placeholder="Enter MRP" required>
+    </div>
 
+        <div class="form-group">
     <label for="marginPrice">Margin Price</label>
     <input type="number" step="0.01" id="marginPrice" name="marginPrice" placeholder="Enter margin price" required>
+        </div>
 
-    <label for="dateOfMg">Date of Manufacturing</label>
-    <input type="date" id="dateOfMg" name="dateOfMg" required>
+            <div class="form-group">
+    <label for="dateOfMgf">Date of Manufacturing</label>
+    <input type="date" id="dateOfMgf" name="dateOfMgf" required>
+            </div>
 
+                <div class="form-group">
     <label for="dateEntered">Date Entered</label>
     <input type="date" id="dateEntered" name="dateEntered" required>
+                </div>
 
+                    <div class="form-group">
     <button type="submit">Submit</button>
+                    </div>
 </form>
 
+</div>
+
+<style>
+
+    /* General Reset */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        flex-direction: column;
+    }
+
+    /* Sticky Header */
+    header {
+        position: sticky;
+        top: 0;
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px;
+        width: 100%;
+        text-align: center;
+        font-size: 2em;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    /* Form Container */
+    .form-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 800px;  /* Adjust width */
+        margin-top: 30px;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .form-group label {
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    .form-group input[type="number"],
+    .form-group input[type="date"] {
+        width: 100%;
+    }
+
+    .form-group button {
+        width: 100%;
+        padding: 14px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .form-group button:hover {
+        background-color: #45a049;
+    }
+
+    /* Responsive Design for Smaller Screens */
+    @media (max-width: 768px) {
+        .form-container {
+            width: 95%;
+        }
+    }
+
+</style>
 
 
 <script src="/script.js"></script>

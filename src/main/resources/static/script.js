@@ -13,10 +13,10 @@ if(stockForm != null) {
             brandType: document.getElementById('brandType').value,
             crateLotSize: document.getElementById('crateLotSize').value,
             crateQuantity: document.getElementById('crateQuantity').value,
-            liquorQuantity: document.getElementById('liquorQuantity').value,
+            liquorQuantityInCrate: document.getElementById('liquorQuantityInCrate').value,
             mrp: document.getElementById('mrp').value,
             marginPrice: document.getElementById('marginPrice').value,
-            dateOfMg: document.getElementById('dateOfMg').value,
+            dateOfMgf: document.getElementById('dateOfMgf').value,
             dateEntered: document.getElementById('dateEntered').value,
         };
 

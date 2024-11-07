@@ -18,7 +18,7 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(name = "Shop_No", nullable = false)
+    @Column(name = "shop_No", nullable = false)
     private String shopNo;
 
     @Column(name = "area", nullable = false)
