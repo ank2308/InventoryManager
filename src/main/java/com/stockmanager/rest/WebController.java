@@ -36,7 +36,7 @@ public class WebController {
     @PostMapping("/addStock/add")
     public ResponseEntity<StockData> addStockData(@RequestBody StockData stockData) {
         String stockAddUrl = "http://localhost:8080/api/stocks/add";
-        StockData saveData = restTemplate.getForObject(stockAddUrl, StockData.class);
+        StockData saveData = restTemplate.postForObject(stockAddUrl, stockData, StockData.class);
         return ResponseEntity.ok(saveData);
     }
 

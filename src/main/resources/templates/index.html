@@ -24,7 +24,7 @@
         </thead>
         <tbody>
         <tr th:each="brandName : ${brandNames}">
-            <td><a th:href="@{'/brandnamedetails/' + ${brandName}}" th:text="${brandName}"></a></td>  <!-- Brand Name -->
+            <td><a th:href="@{'/web/brandnamedetails/' + ${brandName}}" th:text="${brandName}"></a></td>  <!-- Brand Name -->
         </tr>
         </tbody>
     </table>
