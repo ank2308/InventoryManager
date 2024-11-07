@@ -1,44 +1,96 @@
 // Get the form element by its ID
 const stockForm = document.getElementById('stockForm');
 
+if(stockForm != null) {
 // Add an event listener to handle form submission
-stockForm.addEventListener('submit', function(event) {
-    // Prevent the default form submission behavior
-    event.preventDefault();
+    stockForm.addEventListener('submit', function (event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
 
-    // Gather form data into an object
-    const formData = {
-        brandName: document.getElementById('brandName').value,
-        brandType: document.getElementById('brandType').value,
-        crateLotSize: document.getElementById('crateLotSize').value,
-        crateQuantity: document.getElementById('crateQuantity').value,
-        liquorQuantity: document.getElementById('liquorQuantity').value,
-        mrp: document.getElementById('mrp').value,
-        marginPrice: document.getElementById('marginPrice').value,
-        dateOfMg: document.getElementById('dateOfMg').value,
-        dateEntered: document.getElementById('dateEntered').value,
-    };
+        // Gather form data into an object
+        const formData = {
+            brandName: document.getElementById('brandName').value,
+            brandType: document.getElementById('brandType').value,
+            crateLotSize: document.getElementById('crateLotSize').value,
+            crateQuantity: document.getElementById('crateQuantity').value,
+            liquorQuantity: document.getElementById('liquorQuantity').value,
+            mrp: document.getElementById('mrp').value,
+            marginPrice: document.getElementById('marginPrice').value,
+            dateOfMg: document.getElementById('dateOfMg').value,
+            dateEntered: document.getElementById('dateEntered').value,
+        };
 
-    console.log('Form Data:', formData);
+        console.log('Form Data:', formData);
 
-    // Send form data to the server using fetch API
-    fetch('/addStock/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            alert('Stock data added successfully');
+        // Send form data to the server using fetch API
+        fetch('/web/addStock/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to add stock data');
-        });
-});
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Stock data added successfully');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add stock data');
+            });
+    });
+}
+
+// Get the form element by its ID
+const addUser = document.getElementById('addUser');
+
+if(addUser != null) {
+// Add an event listener to handle form submission
+    addUser.addEventListener('submit', function (event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const licenseNo = document.getElementById('licenseNo').value;
+        const licenseExpiry = document.getElementById('licenseExpiry').value;
+        const addressData = {
+            shopno: document.getElementById('shopNo').value,
+            area: document.getElementById('area').value,
+            city: document.getElementById('city').value,
+            pincode: document.getElementById('pincode').value
+        };
+
+        // Gather form data into an object
+        const userData = {
+            name: name,
+            licenseNo: licenseNo,
+            licenseExpiry: licenseExpiry,
+            addressData: [addressData]
+        };
+
+        console.log('User Form Data:', userData);
+
+        // Send form data to the server using fetch API
+        fetch('/web/users/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('User data added successfully');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add user data');
+            });
+    });
+}
+
 
 function loadMenu() {
     fetch('/menu.html')
@@ -54,7 +106,7 @@ function fetchBrands() {
 
     if (brandType) {
         // AJAX request to get the brands by brandType
-        fetch(`/brands/by-type/${brandType}`)
+        fetch(`/web/brands/by-type/${brandType}`)
             .then(response => response.json())
             .then(data => {
                 // Clear the existing brand list
@@ -96,7 +148,7 @@ function editBrand(brandId) {
     const newBrandName = prompt("Enter the new brand name:");
     if (newBrandName) {
         // AJAX request to edit the brand name
-        fetch(`/brands/edit/${brandId}`, {
+        fetch(`/web/brands/edit/${brandId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -119,7 +171,7 @@ function editBrand(brandId) {
 function deleteBrand(brandId) {
     if (confirm("Are you sure you want to delete this brand?")) {
         // AJAX request to delete the brand
-        fetch(`/brands/delete/${brandId}`, {
+        fetch(`/web/brands/delete/${brandId}`, {
             method: 'DELETE'
         })
             .then(response => response.json())
@@ -140,7 +192,7 @@ function fetchBrandNames() {
     let brandNameDropdown = document.getElementById("brandName");
 
     if (brandType) {
-        fetch(`/brands/by-type/${brandType}`)
+        fetch(`/web/brands/by-type/${brandType}`)
             .then(response => response.json())
             .then(data => {
                 // Enable the brand name dropdown
@@ -185,4 +237,6 @@ function addAddress() {
     addressList.appendChild(newAddress);
     addressCount++;
 }
+
+
 window.onload = loadMenu;

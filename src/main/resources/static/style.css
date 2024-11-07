@@ -7,9 +7,9 @@
 
 body {
     font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
     background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
@@ -78,6 +78,10 @@ button:hover {
 .menu {
     list-style: none;
     display: flex;
+    justify-content: center;
+    padding: 10px;
+    background-color: #333;
+    margin: 0;
 }
 
 .menu li {
@@ -247,7 +251,6 @@ nav ul li a:hover {
     display: none;
 }
 
-/* Inline form label and input styling */
 .form-group {
     display: flex;
     align-items: center;
@@ -257,6 +260,7 @@ nav ul li a:hover {
 .form-group label {
     flex: 1;
     font-weight: bold;
+    text-align: right;
     margin-right: 10px;
     color: #555;
 }

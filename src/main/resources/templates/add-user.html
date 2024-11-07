@@ -14,39 +14,27 @@
     <div th:insert="~{'/fragments/menu' :: menu}"></div>
 </header>
 
-<div class="container">
-    <form action="/users/add" method="post">
+    <form id="addUser">
         <!-- User Information -->
-        <div class="form-group">
+        <h3>User Details</h3>
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>
-        </div>
-
-        <label for="licenseNo">License Number:</label>
-        <input type="text" id="licenseNo" name="licenseNo" required>
-
-        <label for="licenseExpiry">License Expiry Date:</label>
-        <input type="date" id="licenseExpiry" name="licenseExpiry" required>
-
-    <!-- Address Information -->
+            <label for="licenseNo">License Number:</label>
+            <input type="text" id="licenseNo" name="licenseNo" required>
+            <label for="licenseExpiry">License Expiry Date:</label>
+            <input type="date" id="licenseExpiry" name="licenseExpiry" required>
         <h3>Address Details</h3>
-        <label>Shop Number:</label>
-        <input type="text" name="addresses[0].shopNo" required>
+            <label>Shop Number:</label>
+            <input type="text" name="shopNo" required>
 
-        <label>Area:</label>
-        <input type="text" name="addresses[0].area" required>
+            <label>Area:</label>
+            <input type="text" name="area" required>
 
-        <label>City:</label>
-        <input type="text" name="addresses[0].city" required>
+            <label>City:</label>
+            <input type="text" name="city" required>
 
-        <label>State:</label>
-        <input type="text" name="addresses[0].state" required>
-
-        <label>Pincode:</label>
-        <input type="text" name="addresses[0].pincode" required>
-
-
-        <button type="button" onclick="addAddress()">Add Another Address</button>
+            <label>Pincode:</label>
+            <input type="text" name="pincode" required>
 
         <button type="submit">Save User</button>
     </form>
@@ -55,8 +43,6 @@
     <div th:if="${successMessage}" class="success-message">
         <p th:text="${successMessage}"></p>
     </div>
-
-</section>
-
+<script src="/script.js"></script>
 </body>
 </html>
