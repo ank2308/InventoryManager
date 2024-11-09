@@ -2,6 +2,7 @@ package com.stockmanager.rest;
 
 import com.stockmanager.model.*;
 import com.stockmanager.service.BrandDetailsService;
+import com.stockmanager.service.DayWiseSaleService;
 import com.stockmanager.service.StockDataService;
 import com.stockmanager.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class StockController {
 
     @Autowired
     private UserDataService userDataService;
+    @Autowired
+    private DayWiseSaleService dayWiseSaleService;
 
     @PostMapping("/stocks/add")
     public ResponseEntity<StockData> addStockData(@RequestBody StockData stockData) {
@@ -91,5 +94,12 @@ public class StockController {
     public ResponseEntity<User> addStockData(@RequestBody User user) {
         User savedUserData = userDataService.addUserData(user);
         return ResponseEntity.ok(savedUserData);
+    }
+
+    // Api to save day wise sale
+    @PostMapping("/sale/day-wise")
+    public ResponseEntity<Long> addDayWiseSale(@RequestBody DayWiseSaleDTO dayWiseSaleDTO) {
+        Long savedId = dayWiseSaleService.addDayWiseSale(dayWiseSaleDTO);
+        return ResponseEntity.ok(savedId);
     }
 }

@@ -26,10 +26,10 @@ public class DayWiseSale {
     private String brandName;
 
     @Column(name = "Brand_Type", nullable = false)
-    private BrandType brandType;
+    private String brandType;
 
     @Column(name = "Liquor_Quantity", nullable = false)
-    private LiquorQuantity liquorQuantity;
+    private int liquorQuantity;
 
     @Column(name="Quantity", nullable = false)
     private double quantity;
