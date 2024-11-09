@@ -1,9 +1,6 @@
 package com.stockmanager.rest;
 
-import com.stockmanager.model.BrandDetails;
-import com.stockmanager.model.StockData;
-import com.stockmanager.model.StockDetails;
-import com.stockmanager.model.User;
+import com.stockmanager.model.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,14 +18,26 @@ public class WebController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @GetMapping("/")
-    public String showHomePage(Model model) {
+    @GetMapping("/q")
+    public String showHomePage1(Model model) {
         // Call the REST API to fetch all brand names
         String apiUrl = "http://localhost:8080/api/stocks/getBrandNameList";
         List<String> brandNames = restTemplate.getForObject(apiUrl, List.class);
 
         // Add brand names to the model to pass to the view
         model.addAttribute("brandNames", brandNames);
+
+        return "index";
+    }
+
+    @GetMapping("/")
+    public String showHomePage(Model model) {
+        // Call the REST API to fetch all brand names
+        String apiUrl = "http://localhost:8080/api/stocks/details";
+        List<CurrentStockDetails> stockDetailsList = restTemplate.getForObject(apiUrl, List.class);
+
+        // Add brand names to the model to pass to the view
+        model.addAttribute("stockDetailsList", stockDetailsList);
 
         return "index";
     }

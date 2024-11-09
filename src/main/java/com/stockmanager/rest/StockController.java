@@ -1,9 +1,6 @@
 package com.stockmanager.rest;
 
-import com.stockmanager.model.BrandDetails;
-import com.stockmanager.model.StockData;
-import com.stockmanager.model.StockDetails;
-import com.stockmanager.model.User;
+import com.stockmanager.model.*;
 import com.stockmanager.service.BrandDetailsService;
 import com.stockmanager.service.StockDataService;
 import com.stockmanager.service.UserDataService;
@@ -32,6 +29,12 @@ public class StockController {
     public ResponseEntity<StockData> addStockData(@RequestBody StockData stockData) {
         StockData saveData = stockDataService.addStockData(stockData);
         return ResponseEntity.ok(saveData);
+    }
+
+    @GetMapping("/stocks/details")
+    public ResponseEntity<List<CurrentStockDetails>> getStockDetails() {
+        List<CurrentStockDetails> currentStockDetailsList = stockDataService.getAllStockData();
+        return ResponseEntity.ok(currentStockDetailsList);
     }
 
     // API to fetch all unique brand names

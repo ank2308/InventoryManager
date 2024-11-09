@@ -1,11 +1,11 @@
 package com.stockmanager.service;
 
-import com.stockmanager.model.StockData;
-import com.stockmanager.model.StockDetails;
+import com.stockmanager.model.*;
 import com.stockmanager.repository.StockDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +17,22 @@ public class StockDataService {
 
     public StockData addStockData(StockData stockData) {
         return stockDataRepository.save(stockData);
+    }
+
+    public List<CurrentStockDetails> getAllStockData() {
+        List<CurrentStockDetails> currentStockDetailsList = new ArrayList<>();
+        List<StockData> stockDataList = stockDataRepository.findAll();
+        for(StockData stockData : stockDataList) {
+            CurrentStockDetails currentStockDetails = new CurrentStockDetails();
+            currentStockDetails.setBrandType(BrandType.fromString(stockData.getBrandType()));
+            currentStockDetails.setBrandName(stockData.getBrandName());
+            currentStockDetails.setLiquorQuantity(LiquorQuantity.fromInt(stockData.getLiquorQuantityInCrate()));
+            currentStockDetails.setTotalCrateLotQuantityLeft(stockData.getCrateLotSize() * stockData.getCrateQuantity());
+            currentStockDetails.setTotalLiquorQuantityLeft(stockData.getLiquorQuantityInCrate() * currentStockDetails.getTotalCrateLotQuantityLeft());
+            currentStockDetails.setTotalPrice(stockData.getMrp() *currentStockDetails.getLiquorQuantity().getQuantityInMl());
+            currentStockDetailsList.add(currentStockDetails);
+        }
+        return currentStockDetailsList;
     }
 
     public List<String> findDistinctBrandName() {
@@ -39,7 +55,7 @@ public class StockDataService {
         totalPrice = (stockDataList.get(0).getMrp() * totalLiquorQuantity * totalCrateSize);
         StockDetails stockDetails = new StockDetails();
         stockDetails.setBrandName(stockDataList.get(0).getBrandName());
-        stockDetails.setBrandType(stockDataList.get(0).getBrandType());
+//        stockDetails.setBrandType(stockDataList.get(0).getBrandType());
         stockDetails.setTotalCrateLotQuantity(totalCrateSize);
         stockDetails.setTotalLiquorQuantity(totalLiquorQuantity);
         stockDetails.setTotalPrice(totalPrice);

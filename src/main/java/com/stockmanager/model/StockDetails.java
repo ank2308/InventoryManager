@@ -10,7 +10,7 @@ import lombok.*;
 public class StockDetails {
 
     private String brandName;
-    private String brandType;
+    private BrandType brandType;
     private int totalCrateLotQuantity;
     private int totalLiquorQuantity;
     private double totalPrice;

@@ -1,6 +1,7 @@
 package com.stockmanager.service;
 
 import com.stockmanager.model.BrandDetails;
+import com.stockmanager.model.BrandType;
 import com.stockmanager.model.StockData;
 import com.stockmanager.repository.BrandDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,12 @@ public class BrandDetailsService {
     }
 
     public List<String> getAllBrandTypes() {
-        return brandDetailsRepository.findAll()
-                .stream()
-                .map(BrandDetails::getBrandType)
-                .distinct()
-                .collect(Collectors.toList());
+//        return brandDetailsRepository.findAll()
+//                .stream()
+//                .map(BrandDetails::getBrandType)
+//                .distinct()
+//                .collect(Collectors.toList());
+        return null;
     }
 
     public List<BrandDetails> getBrandsByType(String brandType) {
