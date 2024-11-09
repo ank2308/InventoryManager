@@ -28,12 +28,11 @@ public class BrandDetailsService {
     }
 
     public List<String> getAllBrandTypes() {
-//        return brandDetailsRepository.findAll()
-//                .stream()
-//                .map(BrandDetails::getBrandType)
-//                .distinct()
-//                .collect(Collectors.toList());
-        return null;
+        return brandDetailsRepository.findAll()
+                .stream()
+                .map(BrandDetails::getBrandType)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public List<BrandDetails> getBrandsByType(String brandType) {
