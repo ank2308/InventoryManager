@@ -58,6 +58,27 @@ public class WebController {
         return "add-stock";  // This will return the add-stock.html from the templates directory
     }
 
+    @PostMapping("/sale/day-wise")
+    public ResponseEntity<StockData> addDayWiseSale(@RequestBody StockData stockData) {
+        String stockAddUrl = "http://localhost:8080/api/stocks/add";
+        StockData saveData = restTemplate.postForObject(stockAddUrl, stockData, StockData.class);
+        return ResponseEntity.ok(saveData);
+    }
+
+    @GetMapping("/add-sale")
+    public String showAddSalePage(Model model) {
+        // Fetch distinct brand types
+        String brandTypesApiUrl = "http://localhost:8080/api/stocks/brands/types";
+        String[] brandTypes = restTemplate.getForObject(brandTypesApiUrl, String[].class);
+        model.addAttribute("brandTypes", brandTypes);
+
+        String liquorQuantityInStockApiUrl = "http://localhost:8080/api/stocks/available-liquor-quantities";
+        List<LiquorQuantity> liquorQuantities = restTemplate.getForObject(liquorQuantityInStockApiUrl, List.class);
+        model.addAttribute("liquorQuantity", liquorQuantities);
+        return "add-sale";  // This will return the add-stock.html from the templates directory
+    }
+
+
     // New method to handle the brand details page
     @GetMapping("/brandnamedetails/{brandName}")
     public String showBrandDetails(@PathVariable String brandName, Model model) {

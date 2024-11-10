@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Day-Wise Sale</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+    <h2>Add Day-Wise Sale</h2>
+    <div th:insert="~{'/fragments/menu' :: menu}"></div>
+</header>
+
+
+<div class="form-container">
+
+<form id="dayWiseSaleForm">
+
+    <div class="form-group">
+        <label for="brandType">Brand Type:</label>
+        <select id="brandType" name="brandType" onchange="fetchBrandNamesInStock()">
+            <option value="" disabled selected>Select Brand Type</option>
+            <option th:each="type : ${brandTypes}" th:value="${type}" th:text="${type}"></option>
+        </select>
+    </div>
+
+    <div class="form-group">
+    <label for="brandName">Brand Name:</label>
+    <select id="brandName" name="brandName" disabled>
+        <option value="" disabled selected>Select Brand Name</option>
+    </select>
+    </div>
+
+
+   <div class="form-group">
+    <label for="liquorQuantity">Liquor Quantity</label>
+       <select id="liquorQuantity" name="liquorQuantity">
+           <option value="" disabled selected>Select Liquor Quantity</option>
+           <option th:each="type : ${liquorQuantity}" th:value="${type}" th:text="${type}"></option>
+       </select>
+   </div>
+
+    <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" name="quantity" placeholder="Enter Quantity" required>
+    </div>
+
+    <div class="form-group">
+        <label for="mrp">MRP</label>
+    <input type="number" step="0.01" id="mrp" name="mrp" placeholder="Enter MRP" required>
+    </div>
+
+    <div class="form-group">
+        <label for="dateOfSale">Date of Sale</label>
+        <input type="date" id="dateOfSale" name="dateOfSale" required>
+    </div>
+
+
+    <div class="form-group">
+        <button type="submit">Submit</button>
+    </div>
+</form>
+
+</div>
+
+<style>
+
+    /* General Reset */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        flex-direction: column;
+    }
+
+    /* Sticky Header */
+    header {
+        position: sticky;
+        top: 0;
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px;
+        width: 100%;
+        text-align: center;
+        font-size: 2em;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    /* Form Container */
+    .form-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 800px;  /* Adjust width */
+        margin-top: 30px;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .form-group label {
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    .form-group input[type="number"],
+    .form-group input[type="date"] {
+        width: 100%;
+    }
+
+    .form-group button {
+        width: 100%;
+        padding: 14px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .form-group button:hover {
+        background-color: #45a049;
+    }
+
+    /* Responsive Design for Smaller Screens */
+    @media (max-width: 768px) {
+        .form-container {
+            width: 95%;
+        }
+    }
+
+</style>
+
+
+<script src="/script.js"></script>
+</body>
+</html>

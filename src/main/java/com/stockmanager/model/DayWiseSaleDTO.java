@@ -15,8 +15,8 @@ import java.util.Date;
 public class DayWiseSaleDTO {
     private Long id;
     private int userId;
-    private String brandName;
     private BrandType brandType;
+    private String brandName;
     private LiquorQuantity liquorQuantity;
     private double quantity;
 

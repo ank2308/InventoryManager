@@ -71,6 +71,13 @@ public class StockController {
         return brandDetailsService.getAllBrandTypes();
     }
 
+    @GetMapping("/stocks/available-liquor-quantities")
+    public List<LiquorQuantity> getAvailableLiquorQuantities() {
+        // need to add brand name and user id as parameter
+        return stockDataService.getAvailableLiquorQuantities();
+    }
+
+
     // API to fetch all brands for a specific brand type
     @GetMapping("/stocks/brands/by-type/{brandType}")
     public List<BrandDetails> getBrandsByType(@PathVariable String brandType) {

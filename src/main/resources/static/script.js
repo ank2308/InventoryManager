@@ -210,6 +210,31 @@ function fetchBrandNames() {
     }
 }
 
+// Function to fetch brand names which in stock for a particular user based on selected brand type
+function fetchBrandNamesInStock() {
+    let brandType = document.getElementById("brandType").value;
+    let brandNameDropdown = document.getElementById("brandName");
+
+    if (brandType) {
+        fetch(`/web/brands/by-type/${brandType}`)
+            .then(response => response.json())
+            .then(data => {
+                // Enable the brand name dropdown
+                brandNameDropdown.disabled = false;
+                brandNameDropdown.innerHTML = '<option value="" disabled selected>Select Brand Name</option>';
+
+                // Populate the brand names
+                data.forEach(brand => {
+                    let option = document.createElement('option');
+                    option.value = brand.brandName;
+                    option.textContent = brand.brandName;
+                    brandNameDropdown.appendChild(option);
+                });
+            });
+    }
+}
+
+
 // Script to add multiple address fields
 let addressCount = 1;
 

@@ -62,6 +62,26 @@ public class StockDataService {
         return stockDetails;
     }
 
+    // Method to get available liquor quantities (enum) based on stock
+    public List<LiquorQuantity> getAvailableLiquorQuantities() {
+        List<StockData> stockDataList = stockDataRepository.findAll();
+        List<LiquorQuantity> availableQuantities = new ArrayList<>();
 
+        // Loop through all stock data and check if crateQuantity > 0
+        for (StockData stock : stockDataList) {
+            if (stock.getCrateQuantity() > 0) {
+                // Try to map liquorQuantityInCrate to LiquorQuantity enum
+                try {
+                    LiquorQuantity quantity = LiquorQuantity.fromInt(stock.getLiquorQuantityInCrate());
+                    availableQuantities.add(quantity);
+                } catch (IllegalArgumentException e) {
+                    // If no matching LiquorQuantity enum is found, skip it
+                    System.out.println("Invalid liquor quantity: " + stock.getLiquorQuantityInCrate() + " ml");
+                }
+            }
+        }
+
+        return availableQuantities;
+    }
 
 }
