@@ -59,17 +59,18 @@ public class WebController {
     }
 
     @PostMapping("/sale/day-wise")
-    public ResponseEntity<StockData> addDayWiseSale(@RequestBody StockData stockData) {
-        String stockAddUrl = "http://localhost:8080/api/stocks/add";
-        StockData saveData = restTemplate.postForObject(stockAddUrl, stockData, StockData.class);
-        return ResponseEntity.ok(saveData);
+    public ResponseEntity<Long> addDayWiseSale(@RequestBody DayWiseSaleDTO daywiseSaleDTO) {
+        String stockAddUrl = "http://localhost:8080/api/sale/day-wise";
+        Long  id = restTemplate.postForObject(stockAddUrl, daywiseSaleDTO, Long.class);
+        return ResponseEntity.ok(id);
     }
 
     @GetMapping("/add-sale")
     public String showAddSalePage(Model model) {
         // Fetch distinct brand types
-        String brandTypesApiUrl = "http://localhost:8080/api/stocks/brands/types";
-        String[] brandTypes = restTemplate.getForObject(brandTypesApiUrl, String[].class);
+        int userId = 1;
+        String brandTypesByUseIdApiUrl = String.format("http://localhost:8080/api/stocks/brands/types/%d", userId);
+        String[] brandTypes = restTemplate.getForObject(brandTypesByUseIdApiUrl, String[].class);
         model.addAttribute("brandTypes", brandTypes);
 
         String liquorQuantityInStockApiUrl = "http://localhost:8080/api/stocks/available-liquor-quantities";
@@ -173,8 +174,8 @@ public class WebController {
 
     @PostMapping("/users/add")
     public String addUserDetails(@RequestBody User user, Model model) {
-        String url = "http://localhost:8080/api/users/add-user";
-        User savedUserData = restTemplate.getForObject(url, User.class);
+        String url = "http://localhost:8080/api/user/add-user";
+        User savedUserData = restTemplate.postForObject(url, user, User.class);
         model.addAttribute("successMessage", "User added Successfully");
         return "add-user";
     }

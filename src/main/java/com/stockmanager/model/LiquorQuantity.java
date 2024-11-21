@@ -16,7 +16,6 @@ public enum LiquorQuantity {
         return quantityInMl;
     }
 
-    // Method to get LiquorQuantity from String
     public static LiquorQuantity fromInt(int label) {
         for (LiquorQuantity quantity : LiquorQuantity.values()) {
             if (quantity.getQuantityInMl() == label) {
@@ -24,5 +23,22 @@ public enum LiquorQuantity {
             }
         }
         throw new IllegalArgumentException("Unknown quantity: " + label);
+    }
+
+    // Method to get LiquorQuantity from String
+    public static int fromString(String quantity) {
+        if (quantity == null) {
+            throw new IllegalArgumentException("Quantity string cannot be null");
+        }
+        switch (quantity.toLowerCase()) {
+            case "small":
+                return SMALL.getQuantityInMl();
+            case "medium":
+                return MEDIUM.getQuantityInMl();
+            case "large":
+                return LARGE.getQuantityInMl();
+            default:
+                throw new IllegalArgumentException("Unknown quantity: " + quantity);
+        }
     }
 }

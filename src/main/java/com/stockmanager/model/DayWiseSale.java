@@ -20,7 +20,7 @@ public class DayWiseSale {
     private Long id;
 
     @Column(name = "User_Id", nullable = false)
-    private int userId;
+    private Long userId;
 
     @Column(name = "Brand_Name", nullable = false)
     private String brandName;
@@ -32,7 +32,7 @@ public class DayWiseSale {
     private int liquorQuantity;
 
     @Column(name="Quantity", nullable = false)
-    private double quantity;
+    private int quantity;
 
     @Column(name="MRP", nullable = false)
     private double mrp;

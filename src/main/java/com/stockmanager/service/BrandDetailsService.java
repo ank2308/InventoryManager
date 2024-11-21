@@ -2,13 +2,14 @@ package com.stockmanager.service;
 
 import com.stockmanager.model.BrandDetails;
 import com.stockmanager.model.BrandType;
+import com.stockmanager.model.LiquorQuantity;
 import com.stockmanager.model.StockData;
 import com.stockmanager.repository.BrandDetailsRepository;
+import com.stockmanager.repository.StockDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +17,9 @@ public class BrandDetailsService {
 
     @Autowired
     private BrandDetailsRepository brandDetailsRepository;
+
+    @Autowired
+    private StockDataRepository stockDataRepository;
 
     // Fetch all brand details
     public List<BrandDetails> getAllBrands() {
@@ -25,6 +29,27 @@ public class BrandDetailsService {
     // Method to add new brand details
     public BrandDetails addBrandDetails(BrandDetails brandDetails) {
         return brandDetailsRepository.save(brandDetails);
+    }
+
+    // find all brand types
+    public List<String> getBrandTypes() {
+        return brandDetailsRepository.findAllBrandTypes();
+    }
+
+    public List<String> getAllBrandTypesByUserId(Long userId) {
+        return stockDataRepository.findAvailableBrandTypesByUserId(userId);
+    }
+
+    public Map<String, List<String>> getAllBrandNamesByUserIdByBrandType(Long userId, String brandType) {
+         List<Object[]> results = stockDataRepository.findAvailableBrandNamesByUserIdByBrandType(userId, brandType);
+         Map<String, List<String>> map = new HashMap<>();
+         for (Object[] stockData : results) {
+             String brandName = (String) stockData[0];
+             int liquorQuantityInCrate = (Integer) stockData[1];
+             map.computeIfAbsent(brandName, k -> new ArrayList<>())
+                     .add(LiquorQuantity.fromInt(liquorQuantityInCrate).name());
+         }
+         return map;
     }
 
     public List<String> getAllBrandTypes() {
@@ -37,6 +62,13 @@ public class BrandDetailsService {
 
     public List<BrandDetails> getBrandsByType(String brandType) {
         return brandDetailsRepository.findByBrandType(brandType);
+    }
+
+    public List<String> getBrandNamesByType(String brandType) {
+        return brandDetailsRepository.findByBrandType(brandType)
+                .stream()
+                .map(BrandDetails::getBrandName)
+                .collect(Collectors.toList());
     }
 
     /**

@@ -28,12 +28,14 @@ public class StockController {
     @Autowired
     private DayWiseSaleService dayWiseSaleService;
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/stocks/add")
     public ResponseEntity<StockData> addStockData(@RequestBody StockData stockData) {
         StockData saveData = stockDataService.addStockData(stockData);
         return ResponseEntity.ok(saveData);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/stocks/details")
     public ResponseEntity<List<CurrentStockDetails>> getStockDetails() {
         List<CurrentStockDetails> currentStockDetailsList = stockDataService.getAllStockData();
@@ -71,6 +73,20 @@ public class StockController {
         return brandDetailsService.getAllBrandTypes();
     }
 
+    // API to fetch all brand types (distinct)
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/stocks/brands/types/{userId}")
+    public List<String> getAllBrandTypesByUserId(@PathVariable Long userId ) {
+        return brandDetailsService.getAllBrandTypesByUserId(userId);
+    }
+
+    // API to fetch all brand types (distinct)
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/stocks/brands/types/{brandType}/{userId}")
+    public  Map<String, List<String>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
+        return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
+    }
+
     @GetMapping("/stocks/available-liquor-quantities")
     public List<LiquorQuantity> getAvailableLiquorQuantities() {
         // need to add brand name and user id as parameter
@@ -97,16 +113,4 @@ public class StockController {
         return ResponseEntity.ok(Collections.singletonMap("success", true));
     }
 
-    @PostMapping("/users/add-user")
-    public ResponseEntity<User> addStockData(@RequestBody User user) {
-        User savedUserData = userDataService.addUserData(user);
-        return ResponseEntity.ok(savedUserData);
-    }
-
-    // Api to save day wise sale
-    @PostMapping("/sale/day-wise")
-    public ResponseEntity<Long> addDayWiseSale(@RequestBody DayWiseSaleDTO dayWiseSaleDTO) {
-        Long savedId = dayWiseSaleService.addDayWiseSale(dayWiseSaleDTO);
-        return ResponseEntity.ok(savedId);
-    }
 }

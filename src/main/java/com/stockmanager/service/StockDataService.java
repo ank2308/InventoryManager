@@ -27,8 +27,8 @@ public class StockDataService {
             currentStockDetails.setBrandType(BrandType.fromString(stockData.getBrandType()));
             currentStockDetails.setBrandName(stockData.getBrandName());
             currentStockDetails.setLiquorQuantity(LiquorQuantity.fromInt(stockData.getLiquorQuantityInCrate()));
-            currentStockDetails.setTotalCrateLotQuantityLeft(stockData.getCrateLotSize() * stockData.getCrateQuantity());
-            currentStockDetails.setTotalLiquorQuantityLeft(stockData.getLiquorQuantityInCrate() * currentStockDetails.getTotalCrateLotQuantityLeft());
+            currentStockDetails.setTotalCrateLotQuantityLeft(stockData.getTotalQuantity());
+            currentStockDetails.setTotalLiquorQuantityLeft(stockData.getLiquorQuantityInCrate() * stockData.getTotalQuantity());
             currentStockDetails.setTotalPrice(stockData.getMrp() *currentStockDetails.getLiquorQuantity().getQuantityInMl());
             currentStockDetailsList.add(currentStockDetails);
         }
@@ -82,6 +82,30 @@ public class StockDataService {
         }
 
         return availableQuantities;
+    }
+
+    public boolean updateStockData(StockData stockData) {
+        List<StockData> currentStocks = stockDataRepository.findByUserIdAndBrandNameAndLiquorQuantityInCrate(
+                stockData.getUserId(),
+                stockData.getBrandName(),
+                stockData.getLiquorQuantityInCrate());
+        if (currentStocks.size()> 0) {
+            StockData currentStock = currentStocks.get(0);
+//            int currentQuantityLeftInStock = currentStock.getCrateLotSize() * currentStock.getCrateQuantity();
+            if(stockData.getTotalQuantity() > currentStock.getCrateLotSize()) {
+                int numOfCrate = stockData.getTotalQuantity()/currentStock.getCrateLotSize();
+//                int quantityLeft = stockData.getTotalQuantity() - currentStock.getCrateLotSize() * numOfCrate;
+                currentStock.setCrateQuantity(currentStock.getCrateQuantity() - numOfCrate);
+                currentStock.setTotalQuantity(currentStock.getTotalQuantity() - stockData.getTotalQuantity());
+                stockDataRepository.save(currentStock);
+            } else if(stockData.getTotalQuantity() < currentStock.getCrateLotSize()) {
+                currentStock.setTotalQuantity(currentStock.getTotalQuantity() - stockData.getTotalQuantity());
+                stockDataRepository.save(currentStock);
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

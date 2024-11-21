@@ -27,6 +27,12 @@ public class User {
     @Column(name = "license_expiry", nullable = false)
     private String licenseExpiry;
 
+    @Column(name = "phone_no", nullable = false)
+    private String phoneNo;
+
+    @Column(name = "email", nullable = true)
+    private String email;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses;
 }

@@ -20,6 +20,9 @@ public class StockData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "User_Id", nullable = false)
+    private Long userId;
+
     @Column(name = "Brand_Name", nullable = false)
     private String brandName;
 
@@ -31,6 +34,9 @@ public class StockData {
 
     @Column(name = "Crate_Quantity", nullable = false)
     private int crateQuantity;
+
+    @Column(name = "Total_Quantity", nullable = true)
+    private int totalQuantity;
 
     @Column(name = "Liquor_Quantity_In_Crate", nullable = false)
     private int liquorQuantityInCrate;

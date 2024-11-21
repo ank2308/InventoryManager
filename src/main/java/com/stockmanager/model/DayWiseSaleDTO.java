@@ -14,11 +14,12 @@ import java.util.Date;
 @Getter
 public class DayWiseSaleDTO {
     private Long id;
-    private int userId;
-    private BrandType brandType;
+    private Long userId;
+    private String brandType;
     private String brandName;
-    private LiquorQuantity liquorQuantity;
-    private double quantity;
+//    private LiquorQuantity liquorQuantity;
+    private String liquorQuantity;
+    private int quantity;
 
     private double mrp;
 

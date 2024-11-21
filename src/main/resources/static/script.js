@@ -43,6 +43,50 @@ if(stockForm != null) {
 }
 
 // Get the form element by its ID
+const dayWiseSaleForm = document.getElementById('dayWiseSaleForm');
+
+if(dayWiseSaleForm != null) {
+// Add an event listener to handle form submission
+    dayWiseSaleForm.addEventListener('submit', function (event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
+        // Gather form data into an object
+        const formData = {
+            userId: 1,
+            brandType: document.getElementById('brandType').value,
+            brandName: document.getElementById('brandName').value,
+            liquorQuantity: document.getElementById('liquorQuantity').value,
+            quantity: document.getElementById('quantity').value,
+            mrp: document.getElementById('mrp').value,
+            dateOfSale: document.getElementById('dateOfSale').value,
+        };
+
+        console.log('Form Data:', formData);
+
+        // Send form data to the server using fetch API
+        fetch('/web/sale/day-wise', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // alert('Stock data added successfully');
+                window.location.href = "/web/";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add stock data');
+            });
+    });
+}
+
+
+// Get the form element by its ID
 const addUser = document.getElementById('addUser');
 
 if(addUser != null) {
@@ -54,10 +98,13 @@ if(addUser != null) {
         const name = document.getElementById('name').value;
         const licenseNo = document.getElementById('licenseNo').value;
         const licenseExpiry = document.getElementById('licenseExpiry').value;
-        const addressData = {
-            shopno: document.getElementById('shopNo').value,
+        const phoneNo = document.getElementById('phoneNo').value;
+        const email = document.getElementById('email').value;
+        const addresses = {
+            shopNo: document.getElementById('shopNo').value,
             area: document.getElementById('area').value,
             city: document.getElementById('city').value,
+            state: document.getElementById('state').value,
             pincode: document.getElementById('pincode').value
         };
 
@@ -66,7 +113,9 @@ if(addUser != null) {
             name: name,
             licenseNo: licenseNo,
             licenseExpiry: licenseExpiry,
-            addressData: [addressData]
+            phoneNo: phoneNo,
+            email: email,
+            addresses: [addresses]
         };
 
         console.log('User Form Data:', userData);
