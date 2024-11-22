@@ -23,7 +23,7 @@ public class UserController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/add-user")
-    public ResponseEntity<User> addStockData(@RequestBody User user) {
+    public ResponseEntity<User> addUserData (@RequestBody User user) {
         User savedUserData = userDataService.addUserData(user);
         return ResponseEntity.ok(savedUserData);
     }

@@ -23,6 +23,10 @@
     <button type="submit">Save Brand</button>
 </form>
 
+<div th:if="${successMessage}" class="success-message">
+    <p th:text="${successMessage}"></p>
+</div>
+
 
 <script src="/script.js"></script>
 </body>

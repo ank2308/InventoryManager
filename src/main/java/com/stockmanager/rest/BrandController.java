@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/brand")
+@RequestMapping("/api/brands")
 public class BrandController {
 
     @Autowired
@@ -31,7 +31,7 @@ public class BrandController {
 
     // API to fetch all brand names
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/")
+    @GetMapping("/getAllBrands")
     public List<BrandDetails> getAllBrands() {
         return brandDetailsService.getAllBrands();
     }
@@ -43,12 +43,11 @@ public class BrandController {
         return brandDetailsService.getAllBrandTypes();
     }
 
-
     // API to fetch all brands for a specific brand type
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/by-type/{brandType}")
-    public List<String> getBrandsByType(@PathVariable String brandType) {
-        return brandDetailsService.getBrandNamesByType(brandType);
+    public List<BrandDetails> getBrandsByType(@PathVariable String brandType) {
+        return brandDetailsService.getBrandsByType(brandType);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -59,9 +58,26 @@ public class BrandController {
         return ResponseEntity.ok(Collections.singletonMap("success", true));
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteBrand(@PathVariable Long id) {
         brandDetailsService.deleteBrand(id);
         return ResponseEntity.ok(Collections.singletonMap("success", true));
     }
+
+    // API to fetch all brand types (distinct)
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/brands/types/{userId}")
+    public List<String> getAllBrandTypesByUserId(@PathVariable Long userId ) {
+        return brandDetailsService.getAllBrandTypesByUserId(userId);
+    }
+
+    // API to fetch all brand types (distinct)
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/brands/types/{brandType}/{userId}")
+    public  Map<String, List<String>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
+        return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
+    }
+
+
 }

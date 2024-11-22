@@ -25,7 +25,7 @@ public class User {
     private String licenseNo;
 
     @Column(name = "license_expiry", nullable = false)
-    private String licenseExpiry;
+    private Date licenseExpiry;
 
     @Column(name = "phone_no", nullable = false)
     private String phoneNo;

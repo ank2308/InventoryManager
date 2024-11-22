@@ -86,13 +86,11 @@ if(dayWiseSaleForm != null) {
 }
 
 
-// Get the form element by its ID
+// JavaScript for form handling
 const addUser = document.getElementById('addUser');
 
-if(addUser != null) {
-// Add an event listener to handle form submission
+if (addUser) {
     addUser.addEventListener('submit', function (event) {
-        // Prevent the default form submission behavior
         event.preventDefault();
 
         const name = document.getElementById('name').value;
@@ -100,27 +98,28 @@ if(addUser != null) {
         const licenseExpiry = document.getElementById('licenseExpiry').value;
         const phoneNo = document.getElementById('phoneNo').value;
         const email = document.getElementById('email').value;
-        const addresses = {
-            shopNo: document.getElementById('shopNo').value,
-            area: document.getElementById('area').value,
-            city: document.getElementById('city').value,
-            state: document.getElementById('state').value,
-            pincode: document.getElementById('pincode').value
-        };
 
-        // Gather form data into an object
+        // Collect multiple addresses if applicable
+        const addressElements = document.querySelectorAll('.address');
+        const addresses = Array.from(addressElements).map(address => ({
+            shopNo: address.querySelector('[name="shopNo"]').value,
+            area: address.querySelector('[name="area"]').value,
+            city: address.querySelector('[name="city"]').value,
+            state: address.querySelector('[name="state"]').value,
+            pincode: address.querySelector('[name="pincode"]').value
+        }));
+
         const userData = {
-            name: name,
-            licenseNo: licenseNo,
-            licenseExpiry: licenseExpiry,
-            phoneNo: phoneNo,
-            email: email,
-            addresses: [addresses]
+            name,
+            licenseNo,
+            licenseExpiry,
+            phoneNo,
+            email,
+            addresses
         };
 
         console.log('User Form Data:', userData);
 
-        // Send form data to the server using fetch API
         fetch('/web/users/add', {
             method: 'POST',
             headers: {
@@ -128,15 +127,48 @@ if(addUser != null) {
             },
             body: JSON.stringify(userData)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('Success:', data);
                 alert('User data added successfully');
+                addUser.reset(); // Reset form on success
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to add user data');
+                alert(`Failed to add user data: ${error.message}`);
             });
+    });
+
+    // Add another address block
+    document.getElementById('addAddress').addEventListener('click', function () {
+        const addressesDiv = document.getElementById('addresses');
+        const index = addressesDiv.children.length;
+
+        const newAddress = `
+            <div class="address">
+                <label>Shop Number:</label>
+                <input type="text" name="shopNo" required>
+
+                <label>Area:</label>
+                <input type="text" name="area" required>
+
+                <label>City:</label>
+                <input type="text" name="city" required>
+
+                <label>State:</label>
+                <input type="text" name="state" required>
+
+                <label>Pincode:</label>
+                <input type="text" name="pincode" required>
+            </div>
+        `;
+
+        addressesDiv.insertAdjacentHTML('beforeend', newAddress);
     });
 }
 
@@ -204,15 +236,15 @@ function editBrand(brandId) {
             },
             body: JSON.stringify({ brandName: newBrandName })
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Brand updated successfully.');
-                    fetchBrands(); // Reload the updated brand list
+            .then(response => {
+                if (response.ok) {
+                    alert("Brand name updated successfully.");
+                    fetchBrands(); // Refresh the list
                 } else {
-                    alert('Failed to update the brand.');
+                    alert("Error updating brand name.");
                 }
-            });
+            })
+            .catch(error => console.error("Error editing brand:", error));
     }
 }
 

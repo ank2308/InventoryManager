@@ -84,7 +84,7 @@ public class WebController {
     @GetMapping("/brandnamedetails/{brandName}")
     public String showBrandDetails(@PathVariable String brandName, Model model) {
         // Call the API to get details for the selected brand
-        String apiUrl = "http://localhost:8080/api/stocks/brands/" + brandName;
+        String apiUrl = "http://localhost:8080/api/stocks/" + brandName;
         StockDetails stockDetails = restTemplate.getForObject(apiUrl, StockDetails.class);
 
         // Pass the brand name and details to the view
@@ -97,7 +97,7 @@ public class WebController {
     // Function to save brand details by calling StockController API
     @PostMapping("/save-brand")
     public String saveBrandDetails(@ModelAttribute("brandDetails") BrandDetails brandDetails, Model model) {
-        String apiUrl = "http://localhost:8080/api/stocks/brand/save";
+        String apiUrl = "http://localhost:8080/api/brands/save";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -107,9 +107,9 @@ public class WebController {
         ResponseEntity<BrandDetails> response = restTemplate.postForEntity(apiUrl, request, BrandDetails.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            model.addAttribute("message", "Brand saved successfully");
+            model.addAttribute("successMessage", "Brand saved successfully");
         } else {
-            model.addAttribute("message", "Error saving brand");
+            model.addAttribute("successMessage", "Error saving brand");
         }
 
         return "redirect:/add-brand";
@@ -118,7 +118,7 @@ public class WebController {
     // Fetch all brand details for the UI
     @GetMapping("/add-brand")
     public String showAddBrandPage(Model model) {
-        String apiUrl = "http://localhost:8080/api/stocks/brands";
+        String apiUrl = "http://localhost:8080/api/brands/getAllBrands";
         BrandDetails[] brandList = restTemplate.getForObject(apiUrl, BrandDetails[].class);
         model.addAttribute("brandList", brandList);
         return "add-brand"; // returns the view
@@ -127,7 +127,7 @@ public class WebController {
     @GetMapping("/select-brand-type")
     public String showBrandTypeSelectionPage(Model model) {
         // Fetch distinct brand types
-        String brandTypesApiUrl = "http://localhost:8080/api/stocks/brands/types";
+        String brandTypesApiUrl = "http://localhost:8080/api/brands/types";
         String[] brandTypes = restTemplate.getForObject(brandTypesApiUrl, String[].class);
         model.addAttribute("brandTypes", brandTypes);
         return "select-brand-type";
@@ -137,20 +137,20 @@ public class WebController {
     @GetMapping("/brands/by-type/{brandType}")
     @ResponseBody
     public BrandDetails[] getBrandsByType(@PathVariable String brandType) {
-        String brandsApiUrl = "http://localhost:8080/api/stocks/brands/by-type/" + brandType;
+        String brandsApiUrl = "http://localhost:8080/api/brands/by-type/" + brandType;
         return restTemplate.getForObject(brandsApiUrl, BrandDetails[].class);
     }
 
     // Endpoint to edit a brand
     @PutMapping("/brands/edit/{id}")
-    public ResponseEntity<?> editBrand(@PathVariable Long id, @RequestParam String brandName) {
-        String url = String.format("http://localhost:8080/api/stocks/brands/edit/%d", id);
+    public ResponseEntity<?> editBrand(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String url = String.format("http://localhost:8080/api/brands/edit/%d", id);
 
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("brandName", brandName);
+        requestBody.put("brandName", request.get("brandName"));
 
         // Call the StockController API
-        ResponseEntity<?> response = restTemplate.postForEntity(url, requestBody, Map.class);
+        ResponseEntity<?> response = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(requestBody), Map.class);
 
         return ResponseEntity.ok(response.getBody());
     }
@@ -158,7 +158,7 @@ public class WebController {
     // Endpoint to delete a brand
     @DeleteMapping("/brands/delete/{id}")
     public ResponseEntity<?> deleteBrand(@PathVariable Long id) {
-        String url = String.format("http://localhost:8080/api/stocks/brands/delete/%d", id);
+        String url = String.format("http://localhost:8080/api/brands/delete/%d", id);
 
         // Call the StockController API
         restTemplate.delete(url);
@@ -175,7 +175,7 @@ public class WebController {
     @PostMapping("/users/add")
     public String addUserDetails(@RequestBody User user, Model model) {
         String url = "http://localhost:8080/api/user/add-user";
-        User savedUserData = restTemplate.postForObject(url, user, User.class);
+        ResponseEntity<User> response = restTemplate.postForEntity(url, user, User.class);
         model.addAttribute("successMessage", "User added Successfully");
         return "add-user";
     }

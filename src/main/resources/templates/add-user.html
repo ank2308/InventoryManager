@@ -14,42 +14,54 @@
     <div th:insert="~{'/fragments/menu' :: menu}"></div>
 </header>
 
-    <form id="addUser">
-        <!-- User Information -->
-        <h3>User Details</h3>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            <label for="licenseNo">License Number:</label>
-            <input type="text" id="licenseNo" name="licenseNo" required>
-            <label for="licenseExpiry">License Expiry Date:</label>
-            <input type="date" id="licenseExpiry" name="licenseExpiry" required>
-            <label for="phoneNo">Phone Number:</label>
-            <input type="text" id="phoneNo" name="phoneNo" required>
-            <label for="email">email:</label>
-            <input type="email" id="email" name="email" required>
-        <h3>Address Details</h3>
+<form id="addUser" action="#" method="POST">
+    <!-- User Information -->
+    <h3>User Details</h3>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="licenseNo">License Number:</label>
+    <input type="text" id="licenseNo" name="licenseNo" required>
+
+    <label for="licenseExpiry">License Expiry Date:</label>
+    <input type="date" id="licenseExpiry" name="licenseExpiry" required>
+
+    <label for="phoneNo">Phone Number:</label>
+    <input type="text" id="phoneNo" name="phoneNo" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <!-- Address Information -->
+    <h3>Address Details</h3>
+    <div id="addresses">
+        <div class="address">
             <label>Shop Number:</label>
-            <input type="text" name="shopNo" id="shopNo" required>
+            <input type="text" name="shopNo" required>
 
             <label>Area:</label>
-            <input type="text" name="area" id="area" required>
+            <input type="text" name="area" required>
 
             <label>City:</label>
-            <input type="text" name="city" id="city" required>
+            <input type="text" name="city" required>
 
             <label>State:</label>
-            <input type="text" name="state" id="state" required>
+            <input type="text" name="state" required>
 
             <label>Pincode:</label>
-            <input type="text" name="pincode" id="pincode" required>
-
-        <button type="submit">Save User</button>
-    </form>
-
-    <!-- Success message -->
-    <div th:if="${successMessage}" class="success-message">
-        <p th:text="${successMessage}"></p>
+            <input type="text" name="pincode" required>
+        </div>
     </div>
+    <button type="button" id="addAddress">Add Another Address</button>
+
+    <button type="submit">Save User</button>
+</form>
+
+<!-- Success message -->
+<div th:if="${successMessage}" class="success-message">
+    <p th:text="${successMessage}"></p>
+</div>
+
 <script src="/script.js"></script>
 </body>
 </html>
