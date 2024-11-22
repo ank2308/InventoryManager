@@ -46,8 +46,8 @@ public class BrandController {
     // API to fetch all brands for a specific brand type
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/by-type/{brandType}")
-    public List<BrandDetails> getBrandsByType(@PathVariable String brandType) {
-        return brandDetailsService.getBrandsByType(brandType);
+    public List<String> getBrandsNamesByType(@PathVariable String brandType) {
+        return brandDetailsService.getBrandNamesByType(brandType);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

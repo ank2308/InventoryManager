@@ -54,6 +54,20 @@ public class StockController {
         return stockDataService.getBrandDetails(brandName);
     }
 
+    // API to fetch all brand types (distinct)
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/brands/types/{userId}")
+    public List<String> getAllBrandTypesByUserId(@PathVariable Long userId ) {
+        return brandDetailsService.getAllBrandTypesByUserId(userId);
+    }
+
+    // API to fetch all brand types (distinct)
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/brands/types/{brandType}/{userId}")
+    public  Map<String, List<String>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
+        return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
+    }
+
 
     @GetMapping("/available-liquor-quantities")
     public List<LiquorQuantity> getAvailableLiquorQuantities() {
