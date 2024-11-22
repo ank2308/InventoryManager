@@ -33,7 +33,7 @@ public class Address {
     @Column(name = "pincode", nullable = false)
     private String pincode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

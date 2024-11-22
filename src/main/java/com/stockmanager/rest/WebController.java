@@ -94,27 +94,6 @@ public class WebController {
         return "brandnamedetails";  // Return the brandnamedetails.html template
     }
 
-    // Function to save brand details by calling StockController API
-    @PostMapping("/save-brand")
-    public String saveBrandDetails(@ModelAttribute("brandDetails") BrandDetails brandDetails, Model model) {
-        String apiUrl = "http://localhost:8080/api/brands/save";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<BrandDetails> request = new HttpEntity<>(brandDetails, headers);
-
-        // Call the StockController API to save the brand
-        ResponseEntity<BrandDetails> response = restTemplate.postForEntity(apiUrl, request, BrandDetails.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            model.addAttribute("successMessage", "Brand saved successfully");
-        } else {
-            model.addAttribute("successMessage", "Error saving brand");
-        }
-
-        return "redirect:/add-brand";
-    }
-
     // Fetch all brand details for the UI
     @GetMapping("/add-brand")
     public String showAddBrandPage(Model model) {
@@ -172,12 +151,43 @@ public class WebController {
         return "add-user";
     }
 
+    // Function to save brand details by calling StockController API
+    @PostMapping("/save-brand")
+    public String saveBrandDetails(@ModelAttribute("brandDetails") BrandDetails brandDetails, Model model) {
+        String apiUrl = "http://localhost:8080/api/brands/save";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<BrandDetails> request = new HttpEntity<>(brandDetails, headers);
+
+        // Call the StockController API to save the brand
+        ResponseEntity<BrandDetails> response = restTemplate.postForEntity(apiUrl, request, BrandDetails.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            model.addAttribute("successMessage", "Brand saved successfully");
+        } else {
+            model.addAttribute("successMessage", "Error saving brand");
+        }
+
+        return "redirect:/add-brand";
+    }
+
     @PostMapping("/users/add")
-    public String addUserDetails(@RequestBody User user, Model model) {
+    public ResponseEntity<User> addUserDetails(@RequestBody User user, Model model) {
         String url = "http://localhost:8080/api/user/add-user";
-        ResponseEntity<User> response = restTemplate.postForEntity(url, user, User.class);
-        model.addAttribute("successMessage", "User added Successfully");
-        return "add-user";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<User> request = new HttpEntity<>(user, headers);
+        ResponseEntity<User> response = restTemplate.postForEntity(url, request, User.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            model.addAttribute("successMessage", "User saved successfully");
+        } else {
+            model.addAttribute("successMessage", "Error saving user");
+        }
+
+        return response;
     }
 
 }
