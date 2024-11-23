@@ -61,7 +61,7 @@ const AddUserForm = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post("/api/users", userData); // Assuming your API endpoint is "/api/users"
+            const response = await axios.post("/api/user/add-user", userData); // Assuming your API endpoint is "/api/users"
             console.log("User created successfully:", response.data);
             // Reset the form
             setUserData({
