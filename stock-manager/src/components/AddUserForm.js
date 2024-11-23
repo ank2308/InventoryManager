@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 
 const AddUserForm = () => {
     // State to hold user data
@@ -61,7 +61,7 @@ const AddUserForm = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post("/api/user/add-user", userData); // Assuming your API endpoint is "/api/users"
+            const response = await axiosInstance.post("/api/user/add-user", userData); // Assuming your API endpoint is "/api/users"
             console.log("User created successfully:", response.data);
             // Reset the form
             setUserData({

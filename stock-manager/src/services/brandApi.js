@@ -1,13 +1,9 @@
-// src/services/api.js
-
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8080/api/brands';  // Your back-end API URL
+import axiosInstance from "./axiosInstance";
 
 // Fetch brand  types
 export const getBrandTypes = async () => {
     try {
-        const response = await axios.get(`${API_URL}/types`);
+        const response = await axiosInstance.get("/api/brands/types");
         console.log(response)
         return response;
     } catch (error) {
@@ -18,7 +14,7 @@ export const getBrandTypes = async () => {
 // Fetch brand names by type
 export const getBrandNamesByType = async (brandType) => {
     try {
-        const response = await axios.get(`${API_URL}/by-type/${brandType}`);
+        const response = await axiosInstance().get(`/api/brands/by-type/${brandType}`);
         console.log(response)
         return response.data;
     } catch (error) {
@@ -28,5 +24,5 @@ export const getBrandNamesByType = async (brandType) => {
 
 // Add new Brand type
 export const addBrandType = async (addbrandDetailRequest) => {
-    return await axios.post(`${API_URL}/add`, addbrandDetailRequest);
+    return await axiosInstance.post("/api/brands/add", addbrandDetailRequest);
 }

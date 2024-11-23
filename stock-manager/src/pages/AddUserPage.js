@@ -1,6 +1,6 @@
 // src/pages/AddUserPage.js
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 
 const AddUserPage = () => {
     const [username, setUsername] = useState("");
@@ -15,7 +15,7 @@ const AddUserPage = () => {
         setError("");
 
         try {
-            const response = await axios.post("/api/auth/register", {
+            const response = await axiosInstance.post(`/api/auth/register`, {
                 username,
                 password,
                 roles: [roles],
