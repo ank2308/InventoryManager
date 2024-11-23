@@ -74,15 +74,4 @@ public class StockController {
         // need to add brand name and user id as parameter
         return stockDataService.getAvailableLiquorQuantities();
     }
-
-    // API to fetch all brand types (distinct)
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/brands/types/{userId}")
-    public List<String> getAllBrandTypesByUserId(@PathVariable Long userId ) {
-        return brandDetailsService.getAllBrandTypesByUserId(userId);
-    }
-
-
-
-
 }

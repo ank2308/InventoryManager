@@ -4,13 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 // src/index.js
-import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+import AppWithRouter from "./App";  // Import Bootstrap CSS
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <App />
+    <AppWithRouter />
   </React.StrictMode>
 );
 
