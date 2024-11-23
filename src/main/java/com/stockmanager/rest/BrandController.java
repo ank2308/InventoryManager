@@ -1,11 +1,13 @@
 package com.stockmanager.rest;
 
+import com.stockmanager.exception.DuplicateBrandNameException;
 import com.stockmanager.model.*;
 import com.stockmanager.service.BrandDetailsService;
 import com.stockmanager.service.DayWiseSaleService;
 import com.stockmanager.service.StockDataService;
 import com.stockmanager.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/brands")
+@RestControllerAdvice
 public class BrandController {
 
     @Autowired
@@ -26,6 +29,14 @@ public class BrandController {
     @PostMapping("/save")
     public ResponseEntity<BrandDetails> saveBrandDetails(@RequestBody BrandDetails brandDetails) {
         BrandDetails savedBrand = brandDetailsService.addBrandDetails(brandDetails);
+        return ResponseEntity.ok(savedBrand);
+    }
+
+    // API to save brand details
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/add")
+    public ResponseEntity<BrandDetails> addBrandWithQuantities(@RequestBody BrandDetailsWithQuantitiesRequestDTO request) {
+        BrandDetails savedBrand = brandDetailsService.addBrandDetailsWithQuantity(request.getBrandDetails(), request.getQuantityIds());
         return ResponseEntity.ok(savedBrand);
     }
 
@@ -77,6 +88,11 @@ public class BrandController {
     @GetMapping("/brands/types/{brandType}/{userId}")
     public  Map<String, List<String>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
         return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
+    }
+
+    @ExceptionHandler(DuplicateBrandNameException.class)
+    public ResponseEntity<String> handleDuplicateBrandNameException(DuplicateBrandNameException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 

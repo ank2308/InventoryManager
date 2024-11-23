@@ -24,8 +24,13 @@ const StockForm = () => {
     useEffect((userId) => {
         const fetchBrandTypes = async () => {
             try {
-                const data = await getBrandTypes(); // API call to fetch brand types
-                setBrandTypes(data);
+                 await getBrandTypes()
+                    .then((response) => {
+                        setBrandTypes(response.data);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching brand types:', error);
+                    });
                 setLoading(false); // Hide loading after fetching data
             } catch (error) {
                 console.error('Error fetching brand types:', error);

@@ -1,13 +1,14 @@
 package com.stockmanager.service;
 
-import com.stockmanager.model.BrandDetails;
-import com.stockmanager.model.BrandType;
-import com.stockmanager.model.LiquorQuantity;
-import com.stockmanager.model.StockData;
+import com.stockmanager.exception.DuplicateBrandNameException;
+import com.stockmanager.model.*;
 import com.stockmanager.repository.BrandDetailsRepository;
+import com.stockmanager.repository.QuantityRepository;
 import com.stockmanager.repository.StockDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,6 +22,9 @@ public class BrandDetailsService {
     @Autowired
     private StockDataRepository stockDataRepository;
 
+    @Autowired
+    private QuantityRepository quantityRepository;
+
     // Fetch all brand details
     public List<BrandDetails> getAllBrands() {
         return brandDetailsRepository.findAll();
@@ -30,6 +34,28 @@ public class BrandDetailsService {
     public BrandDetails addBrandDetails(BrandDetails brandDetails) {
         return brandDetailsRepository.save(brandDetails);
     }
+
+    public BrandDetails addBrandDetailsWithQuantity(BrandDetails brandDetails, List<Long> quantityIds) {
+        try {
+            BrandDetails savedBrandDetails = brandDetailsRepository.save(brandDetails);
+
+            // Fetch quantities based on IDs and map them to the brand
+            Set<Quantity> quantities = new HashSet<>();
+            for (Long quantityId : quantityIds) {
+                Quantity quantity = quantityRepository.findById(quantityId).orElseThrow(() -> new RuntimeException("Quantity not found"));
+                quantities.add(quantity);
+            }
+
+            // Update the brand with the quantities
+            savedBrandDetails.setQuantities(quantities);
+            brandDetailsRepository.save(savedBrandDetails);
+
+            // Return the saved brand details
+            return savedBrandDetails;
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateBrandNameException("Brand name already exists. Please choose a different name.");    }
+    }
+
 
     // find all brand types
     public List<String> getBrandTypes() {
@@ -69,6 +95,10 @@ public class BrandDetailsService {
                 .stream()
                 .map(BrandDetails::getBrandName)
                 .collect(Collectors.toList());
+    }
+
+    public List<Quantity> getQuantitiesForBrand(String brandName) {
+        return brandDetailsRepository.findQuantitiesByBrandName(brandName);
     }
 
     /**

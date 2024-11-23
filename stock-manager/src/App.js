@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import StockForm from "./components/StockForm";
 import SalesForm from "./components/SalesForm";
 import AddUserForm from "./components/AddUserForm";
+import AddBrandTypePage from "./components/AddBrandType";
 
 const App = () => {
     return (
@@ -20,6 +21,7 @@ const App = () => {
                 <Route path="/sales" element={<SalesPage />} />
                 <Route path="/sales/add" element={<SalesForm />} />
                 <Route path="/user/add" element={<AddUserForm />} />
+                <Route path="/brand/add" element={<AddBrandTypePage />} />
             </Routes>
         </Router>
     );

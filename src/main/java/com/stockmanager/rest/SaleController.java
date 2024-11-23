@@ -28,4 +28,10 @@ public class SaleController {
         Long savedId = dayWiseSaleService.addDayWiseSale(dayWiseSaleDTO);
         return ResponseEntity.ok(savedId);
     }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/list")
+    public List<DayWiseSale> getSales(@RequestBody SalesRequestDTO requestDTO) {
+        return dayWiseSaleService.getSales(requestDTO);
+    }
 }

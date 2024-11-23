@@ -1,8 +1,10 @@
 package com.stockmanager.repository;
 
 import com.stockmanager.model.BrandDetails;
+import com.stockmanager.model.Quantity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,5 +19,11 @@ public interface BrandDetailsRepository extends JpaRepository<BrandDetails, Long
 
     @Query("SELECT DISTINCT b.brandType FROM BrandDetails b")
     List<String> findAllBrandNamesByType(String brandType);
+
+    @Query("SELECT q FROM Quantity q " +
+            "JOIN BrandQuantityMapping bqm ON bqm.quantity.id = q.id " +
+            "JOIN BrandDetails bd ON bd.id = bqm.brandDetails.id " +
+            "WHERE bd.brandName = :brandName")
+    List<Quantity> findQuantitiesByBrandName(@Param("brandName") String brandName);
 
 }

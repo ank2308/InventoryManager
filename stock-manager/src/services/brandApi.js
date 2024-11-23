@@ -9,7 +9,7 @@ export const getBrandTypes = async () => {
     try {
         const response = await axios.get(`${API_URL}/types`);
         console.log(response)
-        return response.data;
+        return response;
     } catch (error) {
         console.error("Error fetching stocks", error);
     }
@@ -26,3 +26,7 @@ export const getBrandNamesByType = async (brandType) => {
     }
 };
 
+// Add new Brand type
+export const addBrandType = async (addbrandDetailRequest) => {
+    return await axios.post(`${API_URL}/add`, addbrandDetailRequest);
+}

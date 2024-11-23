@@ -6,8 +6,7 @@ import SalesList from '../components/SalesList';
 const SalesPage = () => {
     return (
         <div>
-            <h2>Sales Management</h2>
-            <SalesForm />
+            {/*<SalesForm />*/}
             <SalesList />
         </div>
     );
