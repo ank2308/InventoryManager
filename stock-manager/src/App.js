@@ -9,11 +9,19 @@ import StockForm from "./components/StockForm";
 import SalesForm from "./components/SalesForm";
 import AddUserForm from "./components/AddUserForm";
 import AddBrandTypePage from "./components/AddBrandType";
+import LoginPage from "./pages/LoginPage";
+import AddUserPage from "./pages/AddUserPage";
 
 const App = () => {
+    const location = useLocation();
+
+    // Define routes where the Navbar should be hidden
+    const hideNavbarRoutes = ["/login"];
+
     return (
-        <Router>
-            <Navbar />
+        <div>
+            {/* Conditionally render the Navbar */}
+            {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/stock" element={<StockPage />} />
@@ -21,10 +29,18 @@ const App = () => {
                 <Route path="/sales" element={<SalesPage />} />
                 <Route path="/sales/add" element={<SalesForm />} />
                 <Route path="/user/add" element={<AddUserForm />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/addAppUser" element={<AddUserPage />} />
                 <Route path="/brand/add" element={<AddBrandTypePage />} />
             </Routes>
-        </Router>
+        </div>
     );
 };
 
-export default App;
+const AppWithRouter = () => (
+    <Router>
+        <App />
+    </Router>
+);
+
+export default AppWithRouter;
