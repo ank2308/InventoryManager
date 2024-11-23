@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/brand';  // Your back-end API URL
+const API_URL = 'http://localhost:8080/api/brands';  // Your back-end API URL
 
 // Fetch brand  types
 export const getBrandTypes = async () => {
