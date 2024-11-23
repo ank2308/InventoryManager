@@ -14,7 +14,7 @@ export const getBrandTypes = async () => {
 // Fetch brand names by type
 export const getBrandNamesByType = async (brandType) => {
     try {
-        const response = await axiosInstance().get(`/api/brands/by-type/${brandType}`);
+        const response = await axiosInstance.get(`/api/brands/by-type/${brandType}`);
         console.log(response)
         return response.data;
     } catch (error) {
