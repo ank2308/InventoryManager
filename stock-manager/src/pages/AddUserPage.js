@@ -5,6 +5,7 @@ import axiosInstance from "../services/axiosInstance";
 const AddUserPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [licenseNo, setLicenseNo] = useState("");
     const [roles, setRoles] = useState("USER"); // Default role
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
@@ -16,11 +17,13 @@ const AddUserPage = () => {
 
         try {
             const response = await axiosInstance.post(`/api/auth/register`, {
+                licenseNo,
                 username,
                 password,
                 roles: [roles],
             });
             setMessage("User added successfully!");
+            setLicenseNo("");
             setUsername("");
             setPassword("");
             setRoles("USER");
@@ -30,13 +33,27 @@ const AddUserPage = () => {
     };
 
     return (
-        <div className="container mt-5">
-            <div className="card shadow">
-                <div className="card-header bg-primary text-white">
-                    <h3 className="text-center">Add AppUser</h3>
-                </div>
-                <div className="card-body">
+        <div className="container mt-4">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <h2>Register User For Application</h2>
+                    {/*        <div className="card shadow-sm">*/}
+                    {/*            <div className="card-header bg-primary text-white">*/}
+                    {/*                <h3 className="text-center">Add AppUser</h3>*/}
+                    {/*            </div>*/}
+                    {/*            <div className="card-body">*/}
                     <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label htmlFor="licenseNo" className="form-label">License No</label>
+                            <input
+                                type="text"
+                                id="licenseNo"
+                                value={licenseNo}
+                                onChange={(e) => setLicenseNo(e.target.value)}
+                                className="form-control"
+                                required
+                            />
+                        </div>
                         <div className="mb-3">
                             <label htmlFor="username" className="form-label">Username</label>
                             <input
@@ -75,6 +92,8 @@ const AddUserPage = () => {
                         {error && <div className="alert alert-danger">{error}</div>}
                         <button type="submit" className="btn btn-primary w-100">Add User</button>
                     </form>
+                    {/*            </div>*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </div>
