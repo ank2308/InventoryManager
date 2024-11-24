@@ -4,37 +4,46 @@ import { useNavigate } from "react-router-dom";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const navigate = useNavigate(); // Initialize navigate for redirection
+    const [user, setUser] = useState(null); // User state
+    const [loading, setLoading] = useState(true); // Loading state
+    const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
+        console.log("Stored User from localStorage:", storedUser);
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setUser(parsedUser);
+            } catch (error) {
+                console.error("Error parsing user from localStorage:", error);
+            }
         }
+        setLoading(false); // Mark loading as complete
     }, []);
 
     const login = (userData) => {
-        console.log("Logging in user: ", userData);
+        console.log("Logging in user:", userData);
         setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData)); // Store user data
-        localStorage.setItem("token", userData.token); // Store token
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", userData.token);
     };
 
     const logout = () => {
+        console.log("Logging out user");
         setUser(null);
         localStorage.removeItem("user");
         localStorage.removeItem("token");
-        navigate("/login"); // Redirect to login after logout
+        navigate("/login");
     };
 
     const hasRole = (roles) => {
-        if (!user || !user.roles) return false; // Return false if no user or roles are present
-        return roles.some((role) => user.roles.includes(role)); // Check if the user has any allowed role
+        if (!user || !user.roles) return false;
+        return roles.some((role) => user.roles.includes(role));
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, hasRole }}>
+        <AuthContext.Provider value={{ user, login, logout, hasRole, loading }}>
             {children}
         </AuthContext.Provider>
     );

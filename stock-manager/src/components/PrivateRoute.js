@@ -1,20 +1,28 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 
 const PrivateRoute = ({ children, allowedRoles }) => {
-    const { auth } = useContext(AuthContext);
+    const { user, hasRole, loading } = useContext(AuthContext);
 
-    if (!auth) {
-        // Redirect to login if not authenticated
+    console.log("AuthContext in PrivateRoute:", { user, loading });
+
+    if (loading) {
+        // Show a loading indicator while AuthContext is being initialized
+        return <div>Loading...</div>;
+    }
+
+    if (!user) {
+        console.log("User is not authenticated. Redirecting to login...");
         return <Navigate to="/login" />;
     }
 
-    const userRoles = auth.roles || [];
-    const hasAccess = allowedRoles.some((role) => userRoles.includes(role));
+    if (!hasRole(allowedRoles)) {
+        console.log("User lacks required roles. Redirecting to unauthorized...");
+        return <Navigate to="/unauthorized" />;
+    }
 
-    return hasAccess ? children : <Navigate to="/unauthorized" />;
+    return children;
 };
 
 export default PrivateRoute;

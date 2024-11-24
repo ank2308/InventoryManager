@@ -47,7 +47,7 @@ const Navbar = () => {
                                 </li>
 
                                 {/* Admin-only options */}
-                                {user.role === "ADMIN" && (
+                                {user.roles.includes( "ROLE_ADMIN" ) && (
                                     <>
                                         <li className="nav-item">
                                             <Link className="nav-link" to="/stock/add">
