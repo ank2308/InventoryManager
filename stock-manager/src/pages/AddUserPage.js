@@ -1,6 +1,7 @@
-// src/pages/AddUserPage.js
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../services/axiosInstance";
+import AuthContext from "../context/AuthContext";
 
 const AddUserPage = () => {
     const [username, setUsername] = useState("");
@@ -9,6 +10,15 @@ const AddUserPage = () => {
     const [roles, setRoles] = useState("USER"); // Default role
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Redirect to unauthorized if not an admin
+        if (user?.role !== "ADMIN") {
+            navigate("/unauthorized");
+        }
+    }, [user, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

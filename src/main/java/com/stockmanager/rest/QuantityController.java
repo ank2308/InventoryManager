@@ -20,7 +20,7 @@ public class QuantityController {
 
     // get all quantities type stored in table
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping
+    @GetMapping("/")
     public List<Quantity> getQuantities() {
         return quantityService.getAllQuantities();
     }
