@@ -7,7 +7,7 @@ const AddUserForm = () => {
         name: "",
         licenseNo: "",
         licenseExpiry: "",
-        phone: "",
+        phoneNo: "",
         email: "",
         addresses: [
             {
@@ -68,7 +68,7 @@ const AddUserForm = () => {
                 name: "",
                 licenseNo: "",
                 licenseExpiry: "",
-                phone: "",
+                phoneNo: "",
                 email: "",
                 addresses: [
                     {
@@ -135,9 +135,9 @@ const AddUserForm = () => {
                     <input
                         type="tel"
                         className="form-control"
-                        id="phone"
-                        value={userData.phone}
-                        onChange={(e) => handleInputChange(e, null, "phone")}
+                        id="phoneNo"
+                        value={userData.phoneNo}
+                        onChange={(e) => handleInputChange(e, null, "phoneNo")}
                         name="user"
                         pattern="[0-9]{10}"
                         placeholder="Enter 10-digit phone number"
