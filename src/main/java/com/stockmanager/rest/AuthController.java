@@ -68,8 +68,9 @@ public class AuthController {
             String refreshToken = jwtUtils.generateRefreshToken(appUser.getUsername());
 
             return ResponseEntity.ok(Map.of(
-                    "accessToken", token,
-                    "refreshToken", refreshToken
+                    "token", token,
+                    "refreshToken", refreshToken,
+                    "roles", roles
             ));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
