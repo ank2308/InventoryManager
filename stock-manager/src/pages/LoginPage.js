@@ -28,7 +28,7 @@ const LoginPage = () => {
             login({ username, token });
 
             // Redirect to the homepage
-            navigate("/");
+            navigate("/home");
         } catch (err) {
             console.error(err);
             setError("Invalid username or password");

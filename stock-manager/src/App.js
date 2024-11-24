@@ -19,7 +19,7 @@ const App = () => {
     const location = useLocation();
 
     // Define routes where the Navbar should be hidden
-    const hideNavbarRoutes = ["/login"];
+    const hideNavbarRoutes = ["/","/login"];
 
     return (
         <AuthProvider>
@@ -29,10 +29,17 @@ const App = () => {
                 <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<LoginPage />} />
-                    <Route path="/home" element={<Home />} />
+                    <Route path="/login" element={<LoginPage />} />
+
                     <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
                     {/* Role-Based Protected Routes */}
+
+                    <Route path="/home" element={
+                        <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
+                        <Home />
+                        </PrivateRoute>} />
+
                     <Route
                         path="/stock"
                         element={

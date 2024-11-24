@@ -4,19 +4,17 @@ import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 
 const PrivateRoute = ({ children, allowedRoles }) => {
-    const { user } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
 
-    if (!user) {
-        // Redirect to login if the user is not authenticated
+    if (!auth) {
+        // Redirect to login if not authenticated
         return <Navigate to="/login" />;
     }
 
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
-        // Redirect to unauthorized page if the user does not have the required role
-        return <Navigate to="/unauthorized" />;
-    }
+    const userRoles = auth.roles || [];
+    const hasAccess = allowedRoles.some((role) => userRoles.includes(role));
 
-    return children;
+    return hasAccess ? children : <Navigate to="/unauthorized" />;
 };
 
 export default PrivateRoute;
