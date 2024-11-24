@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class UserDataService {
@@ -46,4 +48,12 @@ public class UserDataService {
         }
         return null;
     }
+
+    public boolean getUserByLicenseNo (String licenseNo) {
+        List<User> users = userDataRepository.findUserByLicenseNo(licenseNo);
+        if(users.size() > 0) {
+            return true;
+        }
+        return false;
+    };
 }
