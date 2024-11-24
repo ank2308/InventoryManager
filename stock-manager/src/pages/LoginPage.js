@@ -21,11 +21,15 @@ const LoginPage = () => {
                 password,
             });
 
+            console.log("Login api response: ", response.data);
+
             // Extract token from the response
-            const token = response.data;
+            const { token, roles } = response.data;
 
             // Save the token and user info
-            login({ username, token });
+            login({ username, token, roles });
+
+            console.log("Redirecting to home page...");
 
             // Redirect to the homepage
             navigate("/home");

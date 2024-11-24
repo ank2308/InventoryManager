@@ -36,14 +36,14 @@ const App = () => {
                     {/* Role-Based Protected Routes */}
 
                     <Route path="/home" element={
-                        <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
-                        <Home />
+                        <PrivateRoute allowedRoles={["USER", "ROLE_ADMIN"]}>
+                            <Home />
                         </PrivateRoute>} />
 
                     <Route
                         path="/stock"
                         element={
-                            <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
+                            <PrivateRoute allowedRoles={["USER", "ROLE_ADMIN"]}>
                                 <StockPage />
                             </PrivateRoute>
                         }
@@ -51,7 +51,7 @@ const App = () => {
                     <Route
                         path="/stock/add"
                         element={
-                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
                                 <StockForm />
                             </PrivateRoute>
                         }
@@ -59,7 +59,7 @@ const App = () => {
                     <Route
                         path="/sales"
                         element={
-                            <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
+                            <PrivateRoute allowedRoles={["USER", "ROLE_ADMIN"]}>
                                 <SalesPage />
                             </PrivateRoute>
                         }
@@ -67,7 +67,7 @@ const App = () => {
                     <Route
                         path="/sales/add"
                         element={
-                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
                                 <SalesForm />
                             </PrivateRoute>
                         }
@@ -75,7 +75,7 @@ const App = () => {
                     <Route
                         path="/user/add"
                         element={
-                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
                                 <AddUserForm />
                             </PrivateRoute>
                         }
@@ -83,7 +83,7 @@ const App = () => {
                     <Route
                         path="/addAppUser"
                         element={
-                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
                                 <AddUserPage />
                             </PrivateRoute>
                         }
@@ -91,7 +91,7 @@ const App = () => {
                     <Route
                         path="/brand/add"
                         element={
-                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
                                 <AddBrandTypePage />
                             </PrivateRoute>
                         }
