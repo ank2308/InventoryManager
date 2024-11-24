@@ -8,8 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -45,17 +49,29 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AppUser appUser) {
         try {
-            // Authenticate the user
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(appUser.getUsername(), appUser.getPassword())
+            // Authenticate user
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            appUser.getUsername(),
+                            appUser.getPassword()
+                    )
             );
 
-            // If successful, generate JWT token
-            String token = jwtUtils.generateToken(appUser.getUsername());
-            return ResponseEntity.ok(token);
+            // Retrieve roles from authenticated user
+            List<String> roles = authentication.getAuthorities()
+                    .stream()
+                    .map(authority -> authority.getAuthority())
+                    .toList();
 
-        } catch (Exception e) {
-            log.error("Authentication failed for user: {}", appUser.getUsername());
+            // Generate tokens
+            String token = jwtUtils.generateToken(appUser.getUsername(), roles);
+            String refreshToken = jwtUtils.generateRefreshToken(appUser.getUsername());
+
+            return ResponseEntity.ok(Map.of(
+                    "accessToken", token,
+                    "refreshToken", refreshToken
+            ));
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }

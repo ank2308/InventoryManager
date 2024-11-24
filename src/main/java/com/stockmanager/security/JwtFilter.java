@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -26,34 +28,32 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        try {
-            // Extract Authorization header
-            String header = request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
 
-            if (header != null && header.startsWith("Bearer ")) {
-                String token = header.substring(7); // Remove "Bearer " prefix
-                String username = jwtUtils.getUsernameFromToken(token); // Extract username from token
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
 
-                // Validate token and set authentication
+            try {
+                String username = jwtUtils.getUsernameFromToken(token);
+                List<String> roles = jwtUtils.getRolesFromToken(token);
+
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                    if (jwtUtils.validateToken(token, userDetails.getUsername())) {
-                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
+                    if (jwtUtils.validateToken(token, username)) {
+                        UsernamePasswordAuthenticationToken authToken =
+                                new UsernamePasswordAuthenticationToken(userDetails, null,
+                                        roles.stream().map(SimpleGrantedAuthority::new).toList());
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                        // Set authentication in the security context
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
                 }
+            } catch (Exception ex) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+                return;
             }
-        } catch (Exception ex) {
-            // Log token parsing or validation errors
-            logger.error("JWT authentication failed", ex);
         }
 
-        // Proceed with the filter chain
         chain.doFilter(request, response);
     }
 }
