@@ -1,99 +1,87 @@
-// src/pages/LoginPage.js
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import AuthContext from "../context/AuthContext";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const { login } = useContext(AuthContext); // Access the login function from AuthContext
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
+
         try {
-            const response = await axios.post("/api/auth/login", {
+            // Authenticate the user
+            const response = await axios.post("http://localhost:8080/api/auth/login", {
                 username,
                 password,
             });
+
+            // Extract token from the response
             const token = response.data;
-            // Save the JWT token in local storage
-            localStorage.setItem("token", token);
-            // Redirect to the home page or dashboard
+
+            // Save the token and user info
+            login({ username, token });
+
+            // Redirect to the homepage
             navigate("/");
         } catch (err) {
+            console.error(err);
             setError("Invalid username or password");
         }
     };
 
     return (
-        <div style={styles.container}>
-            <h1>Login</h1>
-            <form onSubmit={handleSubmit} style={styles.form}>
-                <div style={styles.inputGroup}>
-                    <label htmlFor="username">Username:</label>
-                    <input
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        style={styles.input}
-                    />
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div className="card shadow">
+                        <div className="card-header bg-primary text-white">
+                            <h3 className="text-center">Login</h3>
+                        </div>
+                        <div className="card-body">
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="username" className="form-label">
+                                        Username
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="password" className="form-label">
+                                        Password
+                                    </label>
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        id="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                {error && <div className="alert alert-danger">{error}</div>}
+                                <button type="submit" className="btn btn-primary w-100">
+                                    Login
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div style={styles.inputGroup}>
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={styles.input}
-                    />
-                </div>
-                {error && <p style={styles.error}>{error}</p>}
-                <button type="submit" style={styles.button}>Login</button>
-            </form>
+            </div>
         </div>
     );
-};
-
-const styles = {
-    container: {
-        maxWidth: "400px",
-        margin: "50px auto",
-        padding: "20px",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
-    },
-    inputGroup: {
-        marginBottom: "15px",
-    },
-    input: {
-        width: "100%",
-        padding: "10px",
-        marginTop: "5px",
-        borderRadius: "4px",
-        border: "1px solid #ccc",
-    },
-    button: {
-        padding: "10px 15px",
-        backgroundColor: "#007BFF",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        cursor: "pointer",
-    },
-    error: {
-        color: "red",
-        marginBottom: "15px",
-    },
 };
 
 export default LoginPage;
