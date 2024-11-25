@@ -6,8 +6,10 @@ import com.stockmanager.service.DayWiseSaleService;
 import com.stockmanager.service.StockDataService;
 import com.stockmanager.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,5 +29,4 @@ public class UserController {
         User savedUserData = userDataService.addUserData(user);
         return ResponseEntity.ok(savedUserData);
     }
-
 }
