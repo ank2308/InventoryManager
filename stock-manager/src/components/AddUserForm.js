@@ -4,6 +4,7 @@ import axiosInstance from "../services/axiosInstance";
 const AddUserForm = () => {
     // State to hold user data
     const [userData, setUserData] = useState({
+        username: "",
         name: "",
         licenseNo: "",
         licenseExpiry: "",
@@ -65,6 +66,7 @@ const AddUserForm = () => {
             console.log("User created successfully:", response.data);
             // Reset the form
             setUserData({
+                username:"",
                 name: "",
                 licenseNo: "",
                 licenseExpiry: "",
@@ -90,6 +92,18 @@ const AddUserForm = () => {
             <h2>Add User</h2>
             <form onSubmit={handleSubmit}>
                 {/* User Information Section */}
+                <div className="form-group">
+                    <label htmlFor="username">Username</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="username"
+                        value={userData.username}
+                        onChange={(e) => handleInputChange(e, null, "username")}
+                        name="user"
+                        required
+                    />
+                </div>
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
                     <input
@@ -131,7 +145,7 @@ const AddUserForm = () => {
 
                 {/* Contact Information Section */}
                 <div className="form-group">
-                    <label htmlFor="phone">Phone</label>
+                    <label htmlFor="phoneNo">Phone</label>
                     <input
                         type="tel"
                         className="form-control"
