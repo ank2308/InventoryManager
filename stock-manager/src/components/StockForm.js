@@ -1,16 +1,18 @@
 // src/components/StockForm.js
-import React, {useEffect, useState} from 'react';
-import {addStock, getBrandTypesForAvailableStocks} from '../services/stocksApi';
-import {getBrandTypes, getBrandNamesByType, getBrandDetailsById} from "../services/brandApi";
+import React, { useEffect, useState } from 'react';
+import { addStock, getBrandTypesForAvailableStocks } from '../services/stocksApi';
+import { getBrandTypes, getBrandNamesByType, getBrandDetailsById } from '../services/brandApi';
+import Select from 'react-select';
 
 const StockForm = () => {
-    const [brandTypes, setBrandTypes] = useState([]); // Store brand types fetched from API
-    const [brandNames, setBrandNames] = useState([]); // Store brand names fetched based on brand type
-    const [selectedBrandId, setSelectedBrandId] = useState(null);
-    const [brandDetails, setBrandDetails] = useState({});
-    const [liquorQuantity, setLiquorQuantity] = useState([]);
-    const [isFormValid, setIsFormValid] = useState(false); // Flag to enable/disable form submission
-    const [loading, setLoading] = useState(true); // Flag to show loading state
+    const [brandTypes, setBrandTypes] = useState([]);
+    const [selectedBrandType, setSelectedBrandType] = useState(null);
+
+    const [brandNames, setBrandNames] = useState([]);
+    const [selectedBrandName, setSelectedBrandName] = useState(null);
+
+    const [liquorQuantities, setLiquorQuantities] = useState([]);
+    const [selectedLiquorQuantity, setSelectedLiquorQuantity] = useState(null);
 
     const [stockData, setStockData] = useState({
         brandName: '',
@@ -20,120 +22,84 @@ const StockForm = () => {
         liquorQuantityInCrate: '',
         mrp: 0.0,
         marginPrice: 0.0,
-        dateOfMgf: ''
+        dateOfMgf: '',
     });
 
-    // Fetch available brand types when component mounts
-    useEffect((userId) => {
+    const [isFormValid, setIsFormValid] = useState(false);
+
+    // Fetch brand types on component mount
+    useEffect(() => {
         const fetchBrandTypes = async () => {
             try {
-                 await getBrandTypes()
-                    .then((response) => {
-                        setBrandTypes(response.data);
-                    })
-                    .catch((error) => {
-                        console.error('Error fetching brand types:', error);
-                    });
-                setLoading(false); // Hide loading after fetching data
+                const response = await getBrandTypes();
+                setBrandTypes(response.data.map((type) => ({ value: type, label: type })));
             } catch (error) {
                 console.error('Error fetching brand types:', error);
-                setLoading(false); // Hide loading after fetching data
             }
         };
         fetchBrandTypes();
     }, []);
 
-    // Fetch brand names when brand type is selected
-    useEffect(() => {
-        const fetchBrandNames = async () => {
-            if (stockData.brandType) {
-                try {
-                    const data = await getBrandNamesByType(stockData.brandType); // API call to fetch brand names based on brand type
-                    setBrandNames(data);
-                } catch (error) {
-                    console.error('Error fetching brand names:', error);
-                }
-            }
-        };
-        fetchBrandNames();
-    }, [stockData.brandType]);
+    // Fetch brand names when a brand type is selected
+    const handleBrandTypeChange = async (selectedOption) => {
+        setSelectedBrandName(null);
+        setSelectedLiquorQuantity(null);
+        setLiquorQuantities([]);
+        setSelectedBrandType(selectedOption);
+        setStockData((prevState) => ({
+            ...prevState,
+            brandType: selectedOption.value,
+            brandName: '', // Reset brand name
+            liquorQuantityInCrate: '', // Reset liquor quantity
+            mrp: 0.0, // Reset MRP
+        }));
 
-    // Fetch brand names when brand type is selected
-    useEffect(() => {
-        const fetchBrandDetailsById = async (brandName) => {
-            if (stockData.brandType) {
-                try {
-                    const data = await getBrandDetailsById(selectedBrandId); // API call to fetch brand names based on brand type
-                    setBrandDetails(data)
-                    setLiquorQuantity(data.quantityMappings);
-                } catch (error) {
-                    console.error('Error fetching brand names:', error);
-                }
-            }
-        };
-        fetchBrandDetailsById();
-    }, [selectedBrandId]);
+        try {
+            const response = await getBrandNamesByType(selectedOption.value);
+            console.log(response);
+            setBrandNames(response);
+        } catch (error) {
+            console.error('Error fetching brand names:', error);
+        }
+    };
 
-    // Validate form based on selections
+    const handleBrandNameChange = async (selectedOption) => {
+        setSelectedLiquorQuantity(null);
+        setLiquorQuantities([]);
+        setSelectedBrandName(selectedOption);
+        setStockData((prevState) => ({
+            ...prevState,
+            brandName: selectedOption.label,
+            liquorQuantityInCrate: '', // Reset liquor quantity
+            mrp: 0.0, // Reset MRP
+        }));
+
+        try {
+            const brandDetails = await getBrandDetailsById(selectedOption.value); // Fetch brand details
+            setLiquorQuantities(
+                brandDetails.quantityMappings.map((quantity) => ({
+                    value: quantity.quantityId,
+                    label: `${quantity.quantityName} - ${quantity.quantity} ml`,
+                    mrp: quantity.mrp, // Include MRP for dynamic updates
+                }))
+            );
+        } catch (error) {
+            console.error("Error fetching brand details:", error);
+        }
+    };
+
+    // Validate the form
     useEffect(() => {
         const { brandType, brandName, crateLotSize, crateQuantity, liquorQuantityInCrate, mrp, dateOfMgf } = stockData;
-        setIsFormValid(
-            brandType && brandName && crateLotSize && crateQuantity && liquorQuantityInCrate && mrp && dateOfMgf
-        ); // Ensure all fields are filled
+        setIsFormValid(brandType && brandName && crateLotSize && crateQuantity && liquorQuantityInCrate && mrp && dateOfMgf);
     }, [stockData]);
-
-    // Handle input change
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        if (name === "brandName") {
-            const selectedId = value;
-            setSelectedBrandId(selectedId);
-            console.log("Selected Brand ID:", selectedId); // Use this as needed
-            setStockData({
-                ...stockData,
-                brandName: value,
-            });
-        } else  if (name === "liquorQuantity") {
-            console.log('value', value)
-            // Find the selected quantity object
-            const selectedQuantity = liquorQuantity.find(
-                (item) => item.quantityId.toString() === value
-            );
-            console.log('selected quant ', selectedQuantity)
-
-            // Update state with the selected quantity and MRP
-            setStockData({
-                ...stockData,
-                liquorQuantityInCrate: value,
-                mrp: selectedQuantity.mrp,
-            });
-
-            setBrandDetails((prevDetails) => ({
-                ...prevDetails,
-                mrp: selectedQuantity.mrp,
-            }));
-        } else {
-            // Handle other input changes
-            setStockData({
-                ...stockData,
-                [name]: value,
-            });
-        }
-        console.log(stockData)
-    };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            stockData.userId = 1
-            await addStock(stockData); // API call to add stock
+            await addStock({ ...stockData, userId: 1 });
             alert('Stock added successfully!');
-            // Reset form or redirect if needed
-            setBrandDetails({})
-            setLiquorQuantity([])
-            setBrandNames([])
-            setBrandTypes([])
             setStockData({
                 brandName: '',
                 brandType: '',
@@ -144,9 +110,12 @@ const StockForm = () => {
                 marginPrice: 0.0,
                 dateOfMgf: '',
             });
+            setSelectedBrandType(null);
+            setSelectedBrandName(null);
+            setSelectedLiquorQuantity(null);
         } catch (error) {
             console.error('Error adding stock:', error);
-            alert('Failed to add stock!');
+            alert('Failed to add stock.');
         }
     };
 
@@ -156,113 +125,74 @@ const StockForm = () => {
             <form onSubmit={handleSubmit}>
                 {/* Brand Type Dropdown */}
                 <div className="form-group">
-                    <label htmlFor="brandType">Brand Type</label>
-                    {loading ? (
-                        <p>Loading brand types...</p> // Show loading message while waiting for data
-                    ) : (
-                        <select
-                            id="brandType"
-                            className="form-control"
-                            name="brandType"
-                            value={stockData.brandType}
-                            onChange={handleInputChange}
-                        >
-                            <option value="">Select Brand Type</option>
-                            {brandTypes.map((type, index) => (
-                                <option key={index} value={type}>{type}</option>
-                            ))}
-                        </select>
-                    )}
-                </div>
-
-                <div className="form-group mt-3">
-                    <label htmlFor="brandName">Brand Name</label>
-                    <select
-                        id="brandName"
-                        className="form-control"
-                        name="brandName"
-                        value={stockData.brandName}
-                        onChange={handleInputChange}
-                        disabled={!stockData.brandType} // Disable until a brand type is selected
-                        required={stockData.brandType} // Make required if a brand type is selected
-                    >
-                        <option value="">Select Brand Name</option>
-                        {brandNames.length > 0 ? (
-                            brandNames.map((brand) => (
-                                <option key={brand.brandId} value={brand.brandId}>
-                                    { brand.brandName}
-                                </option>
-                            ))
-                        ) : (
-                            <option value="" disabled>No Brand Names Available</option>
-                        )}
-                    </select>
-                </div>
-
-                {/* Liquor Quantity */}
-                <div className="form-group mt-3">
-                    <label htmlFor="brandName">Liquor Quantity</label>
-                    <select
-                        id="liquorQuantity"
-                        className="form-control"
-                        name="liquorQuantity"
-                        value={stockData.liquorQuantity}
-                        onChange={handleInputChange}
-                        disabled={!stockData.brandType && !stockData.brandName} // Disable until a brand type is selected
-                        required={stockData.brandType && stockData.brandName} // Make required if a brand type is selected
-                    >
-                        <option value="">Select Liquor Quantity</option>
-                        {liquorQuantity.map(({ quantityId, quantity, quantityName }) => (
-                            <option key={quantityId} value={quantityId}>
-                                {quantityName} - {quantity} ml
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {/* Mrp */}
-                <div className="form-group mt-3">
-                    <label>Price (MRP)</label>
-                    <input
-                        type="number"
-                        className="form-control"
-                        name="mrp"
-                        value={stockData.mrp}
-                        placeholder="Enter MRP"
-                        disabled// Disable if no brand type selected
-                        required
+                    <label>Brand Type</label>
+                    <Select
+                        options={brandTypes}
+                        value={selectedBrandType}
+                        onChange={handleBrandTypeChange}
+                        placeholder="Select or search Brand Type"
                     />
                 </div>
 
-                {/* Crate lot size */}
+                {/* Brand Name Dropdown */}
                 <div className="form-group mt-3">
-                    <label htmlFor="crateLotSize">Crate Lot Size</label>
+                    <label>Brand Name</label>
+                    <Select
+                        options={brandNames}
+                        value={selectedBrandName}
+                        onChange={handleBrandNameChange}
+                        placeholder="Select or search Brand Name"
+                        isDisabled={!brandNames.length}
+                    />
+                </div>
+
+                {/* Liquor Quantity Dropdown */}
+                <div className="form-group mt-3">
+                    <label>Liquor Quantity</label>
+                    <Select
+                        options={liquorQuantities}
+                        value={selectedLiquorQuantity}
+                        onChange={(selectedOption) => {
+                            setSelectedLiquorQuantity(selectedOption);
+                            setStockData((prevState) => ({
+                                ...prevState,
+                                liquorQuantityInCrate: selectedOption.label,
+                                mrp: selectedOption.mrp, // Dynamically update MRP
+                            }));
+                        }}
+                        placeholder="Select or search Liquor Quantity"
+                        isDisabled={!liquorQuantities.length}
+                    />
+                </div>
+
+                {/* Additional Fields */}
+                <div className="form-group mt-3">
+                    <label>Price (MRP)</label>
+                    <input type="number" className="form-control" name="mrp" value={stockData.mrp} readOnly />
+                </div>
+
+                <div className="form-group mt-3">
+                    <label>Crate Lot Size</label>
                     <input
                         type="number"
                         className="form-control"
                         name="crateLotSize"
                         value={stockData.crateLotSize}
-                        disabled={!stockData.brandType} // Disable if no brand type selected
-                        onChange={handleInputChange}
-                        required
+                        onChange={(e) => setStockData({ ...stockData, crateLotSize: e.target.value })}
                     />
                 </div>
 
-                {/* Crate quantity */}
                 <div className="form-group mt-3">
-                    <label htmlFor="crateQuantity">Crate Quantity</label>
+                    <label>Crate Quantity</label>
                     <input
                         type="number"
                         className="form-control"
                         name="crateQuantity"
                         value={stockData.crateQuantity}
-                        disabled={!stockData.brandType} // Disable if no brand type selected
-                        onChange={handleInputChange}
-                        required
+                        onChange={(e) => setStockData({ ...stockData, crateQuantity: e.target.value })}
                     />
                 </div>
 
-                {/* Margin price */}
                 <div className="form-group mt-3">
                     <label>Margin Price</label>
                     <input
@@ -270,34 +200,22 @@ const StockForm = () => {
                         className="form-control"
                         name="marginPrice"
                         value={stockData.marginPrice}
-                        placeholder="Enter margin Price"
-                        disabled={!stockData.brandType} // Disable if no brand type selected
-                        onChange={handleInputChange}
-                        required
+                        onChange={(e) => setStockData({ ...stockData, marginPrice: e.target.value })}
                     />
                 </div>
 
-                {/* Date of Manufacture (disabled if no brand type selected) */}
                 <div className="form-group mt-3">
-                    <label htmlFor="dateOfMgf">Date of Manufacture</label>
+                    <label>Date of Manufacture</label>
                     <input
                         type="date"
                         className="form-control"
                         name="dateOfMgf"
                         value={stockData.dateOfMgf}
-                        disabled={!stockData.brandType} // Disable if no brand type selected
-                        onChange={handleInputChange}
-                        required
+                        onChange={(e) => setStockData({ ...stockData, dateOfMgf: e.target.value })}
                     />
                 </div>
 
-
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    className="btn btn-primary mt-3"
-                    disabled={!isFormValid} // Disable if form is not valid
-                >
+                <button type="submit" className="btn btn-primary mt-3" disabled={!isFormValid}>
                     Add Stock
                 </button>
             </form>

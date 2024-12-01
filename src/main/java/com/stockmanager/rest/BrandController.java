@@ -73,7 +73,8 @@ public class BrandController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/by-type/{brandType}")
     public List<BrandNameWithIdDTO> getBrandsNamesByType(@PathVariable String brandType) {
-        return brandDetailsService.getBrandNamesByType(brandType);
+        var response = brandDetailsService.getBrandNamesByType(brandType);
+        return response;
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

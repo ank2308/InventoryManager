@@ -15,10 +15,16 @@ export const getBrandTypes = async () => {
 export const getBrandNamesByType = async (brandType) => {
     try {
         const response = await axiosInstance.get(`/api/brands/by-type/${brandType}`);
-        console.log(response)
-        return response.data;
+        console.log("Response by axios:", response);
+
+        // Map response data into dropdown-compatible options
+        return response.data.map((brand) => ({
+            value: brand.brandId, // Use brandId as the value
+            label: brand.brandName, // Use brandName as the label
+        }));
     } catch (error) {
-        console.error("Error fetching stocks", error);
+        console.error("Error fetching brand names by type:", error);
+        throw error; // Re-throw error to handle it higher in the call stack
     }
 };
 
@@ -26,10 +32,12 @@ export const getBrandNamesByType = async (brandType) => {
 export const getBrandDetailsById = async (brandId) => {
     try {
         const response = await axiosInstance.get(`/api/brands/${brandId}`);
-        console.log(response)
-        return response.data;
+        console.log("Brand Details Response:", response.data);
+
+        return response.data; // Returns the full BrandDetailsWithQuantitiesResponseDTO object
     } catch (error) {
-        console.error("Error fetching stocks", error);
+        console.error("Error fetching brand details:", error);
+        throw error; // Re-throw error to handle it in calling code
     }
 };
 
