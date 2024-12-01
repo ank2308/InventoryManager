@@ -211,4 +211,12 @@ public class BrandDetailsService {
         }
         return false; // Deletion failed, brand not found
     }
+
+    public List<BrandDetails> findByNameContaining(String name) {
+        return brandDetailsRepository.findByBrandNameContainingIgnoreCase(name);
+    }
+
+    public List<String> findBrandNamesContaining(String query) {
+        return brandDetailsRepository.findBrandNamesContainingIgnoreCase(query);
+    }
 }

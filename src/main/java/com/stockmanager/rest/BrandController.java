@@ -105,6 +105,19 @@ public class BrandController {
         return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
     }
 
+    @GetMapping("search")
+    public ResponseEntity<List<BrandDetails>> searchBrands(@RequestParam String brandName) {
+        List<BrandDetails> brands = brandDetailsService.findByNameContaining(brandName);
+        return ResponseEntity.ok(brands);
+    }
+
+    @GetMapping("/suggestions")
+    public ResponseEntity<List<String>> getBrandSuggestions(@RequestParam String query) {
+        List<String> suggestions = brandDetailsService.findBrandNamesContaining(query);
+        return ResponseEntity.ok(suggestions);
+    }
+
+
     @ExceptionHandler(DuplicateBrandNameException.class)
     public ResponseEntity<String> handleDuplicateBrandNameException(DuplicateBrandNameException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);

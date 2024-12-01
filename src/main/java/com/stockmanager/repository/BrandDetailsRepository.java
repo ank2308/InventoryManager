@@ -27,4 +27,8 @@ public interface BrandDetailsRepository extends JpaRepository<BrandDetails, Long
     List<Quantity> findQuantitiesByBrandName(@Param("brandName") String brandName);
 
     List<BrandDetails> findByBrandName(String brandName);
+    List<BrandDetails> findByBrandNameContainingIgnoreCase(String brandName);
+
+    @Query("SELECT b.brandName FROM BrandDetails b WHERE LOWER(b.brandName) LIKE LOWER(CONCAT('%', :query, '%'))")
+    List<String> findBrandNamesContainingIgnoreCase(@Param("query") String query);
 }
