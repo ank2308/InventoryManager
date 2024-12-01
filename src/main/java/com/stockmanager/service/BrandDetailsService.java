@@ -88,12 +88,11 @@ public class BrandDetailsService {
                     existingMapping.setMrp(mapping.getMrp());
                     brandQuantityMappingRepository.save(existingMapping);
                 }
-                return brandDetails;
             }
+            return brandDetails;
         } catch (DataIntegrityViolationException e) {
             throw new DuplicateBrandNameException("Brand name already exists. Please choose a different name.");
         }
-        return null;
 }
 
 
