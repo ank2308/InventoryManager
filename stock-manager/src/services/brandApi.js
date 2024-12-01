@@ -22,6 +22,18 @@ export const getBrandNamesByType = async (brandType) => {
     }
 };
 
+// get brand details by brand name
+export const getBrandDetailsById = async (brandId) => {
+    try {
+        const response = await axiosInstance.get(`/api/brands/${brandId}`);
+        console.log(response)
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching stocks", error);
+    }
+};
+
+
 // Add new Brand type
 export const addBrandType = async (addbrandDetailRequest) => {
     return await axiosInstance.post("/api/brands/add", addbrandDetailRequest);

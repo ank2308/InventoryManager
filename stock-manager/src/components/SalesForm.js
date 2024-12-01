@@ -65,9 +65,6 @@ const SalesForm = () => {
     }, [saleData]);
 
     function getLiquorQuantityByBrand(brandName) {
-        console.log('brand Name', brandName)
-        console.log('map ', brandTypeData)
-        console.log('quantity ', brandTypeData[brandName])
         return brandTypeData[brandName] || [];  // Return an empty array if the brand doesn't exist
     }
     // Handle input change
@@ -163,7 +160,7 @@ const SalesForm = () => {
 
                 {/* Liquor Quantity */}
                 <div className="form-group mt-3">
-                    <label htmlFor="brandName">Brand Name</label>
+                    <label htmlFor="brandName">Liquor Quantity</label>
                     <select
                         id="liquorQuantity"
                         className="form-control"

@@ -26,4 +26,5 @@ public interface BrandDetailsRepository extends JpaRepository<BrandDetails, Long
             "WHERE bd.brandName = :brandName")
     List<Quantity> findQuantitiesByBrandName(@Param("brandName") String brandName);
 
+    List<BrandDetails> findByBrandName(String brandName);
 }

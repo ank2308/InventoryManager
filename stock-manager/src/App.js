@@ -15,6 +15,7 @@ import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import AuthContext from "./context/AuthContext";
 import {useContext} from "react";
+import BrandsList from "./components/BrandsList";
 
 const App = () => {
 
@@ -120,6 +121,14 @@ const AppContent = () => {
                     element={
                         <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
                             <AddBrandTypePage />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/brand/list"
+                    element={
+                        <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                            <BrandsList />
                         </PrivateRoute>
                     }
                 />

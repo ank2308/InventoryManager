@@ -27,6 +27,10 @@ public class BrandDetails {
     @Column(nullable = false)
     private String brandType;
 
+    @Column(nullable = false)
+    private String description;
+
+
     @ManyToMany
     @JoinTable(
             name = "brand_quantity_mapping",

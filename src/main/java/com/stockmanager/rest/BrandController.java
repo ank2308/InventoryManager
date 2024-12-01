@@ -7,6 +7,7 @@ import com.stockmanager.service.DayWiseSaleService;
 import com.stockmanager.service.StockDataService;
 import com.stockmanager.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,15 +37,29 @@ public class BrandController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/add")
     public ResponseEntity<BrandDetails> addBrandWithQuantities(@RequestBody BrandDetailsWithQuantitiesRequestDTO request) {
-        BrandDetails savedBrand = brandDetailsService.addBrandDetailsWithQuantity(request.getBrandDetails(), request.getQuantityIds());
+        BrandDetails savedBrand = brandDetailsService.addBrandDetailsWithQuantity(request);
         return ResponseEntity.ok(savedBrand);
     }
 
     // API to fetch all brand names
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/getAllBrands")
-    public List<BrandDetails> getAllBrands() {
-        return brandDetailsService.getAllBrands();
+    public Page<BrandDetails> getAllBrands(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "5") int size) {
+        return brandDetailsService.getAllBrands(page, size);
+    }
+
+    @GetMapping("/{brandId}")
+    public ResponseEntity<BrandDetailsWithQuantitiesResponseDTO> getBrandDetailsWithQuantities(
+            @PathVariable Long brandId) {
+        BrandDetailsWithQuantitiesResponseDTO response = brandDetailsService.getBrandDetailsWithQuantities(brandId);
+        return ResponseEntity.ok(response);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/by-name/{brandName}")
+    public ResponseEntity<BrandDetails> getBrandDetailsByName(@PathVariable String brandName) throws Exception {
+        return ResponseEntity.ok(brandDetailsService.getBrandDetailsByName(brandName));
     }
 
     // API to fetch all brand types (distinct)
@@ -57,7 +72,7 @@ public class BrandController {
     // API to fetch all brands for a specific brand type
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/by-type/{brandType}")
-    public List<String> getBrandsNamesByType(@PathVariable String brandType) {
+    public List<BrandNameWithIdDTO> getBrandsNamesByType(@PathVariable String brandType) {
         return brandDetailsService.getBrandNamesByType(brandType);
     }
 

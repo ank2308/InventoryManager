@@ -25,4 +25,8 @@ public class BrandQuantityMapping {
     @ManyToOne
     @JoinColumn(name = "quantity_id", nullable = false)
     private Quantity quantity;
+
+    @Column(nullable = false)
+    private float mrp;
+
 }

@@ -69,6 +69,11 @@ const Navbar = () => {
                                                 Add Brand
                                             </Link>
                                         </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/brand/list">
+                                                Brands Details
+                                            </Link>
+                                        </li>
                                     </>
                                 )}
                             </>
