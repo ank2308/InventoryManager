@@ -9,13 +9,15 @@ import SalesForm from "./components/SalesForm";
 import AddUserForm from "./components/AddUserForm";
 import AddBrandTypePage from "./components/AddBrandType";
 import LoginPage from "./pages/LoginPage";
-import AddUserPage from "./pages/AddUserPage";
+import AddUserss from "./pages/AddUserss";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import AuthContext from "./context/AuthContext";
 import {useContext} from "react";
 import BrandsList from "./components/BrandsList";
+import ManageUsersPage from "./components/ManageUsersPage";
+import AddApplicationUserPage from "./pages/AddAplicationUserPage";
 
 const App = () => {
 
@@ -63,7 +65,7 @@ const AppContent = () => {
                 <Route
                     path="/home"
                     element={
-                        <PrivateRoute allowedRoles={["USER", "ROLE_ADMIN"]}>
+                        <PrivateRoute allowedRoles={["ROLE_USER", "ROLE_ADMIN"]}>
                             <Home />
                         </PrivateRoute>
                     }
@@ -71,7 +73,7 @@ const AppContent = () => {
                 <Route
                     path="/stock"
                     element={
-                        <PrivateRoute allowedRoles={["USER", "ROLE_ADMIN"]}>
+                        <PrivateRoute allowedRoles={["ROLE_USER", "ROLE_ADMIN"]}>
                             <StockPage />
                         </PrivateRoute>
                     }
@@ -79,7 +81,7 @@ const AppContent = () => {
                 <Route
                     path="/stock/add"
                     element={
-                        <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                        <PrivateRoute allowedRoles={["ROLE_USER","ROLE_ADMIN"]}>
                             <StockForm />
                         </PrivateRoute>
                     }
@@ -87,7 +89,7 @@ const AppContent = () => {
                 <Route
                     path="/sales"
                     element={
-                        <PrivateRoute allowedRoles={["USER", "ROLE_ADMIN"]}>
+                        <PrivateRoute allowedRoles={["ROLE_USER", "ROLE_ADMIN"]}>
                             <SalesPage />
                         </PrivateRoute>
                     }
@@ -95,7 +97,7 @@ const AppContent = () => {
                 <Route
                     path="/sales/add"
                     element={
-                        <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                        <PrivateRoute allowedRoles={["ROLE_USER","ROLE_ADMIN"]}>
                             <SalesForm />
                         </PrivateRoute>
                     }
@@ -112,7 +114,7 @@ const AppContent = () => {
                     path="/addAppUser"
                     element={
                         <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-                            <AddUserPage />
+                            <AddUserss />
                         </PrivateRoute>
                     }
                 />
@@ -127,8 +129,24 @@ const AppContent = () => {
                 <Route
                     path="/brand/list"
                     element={
-                        <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                        <PrivateRoute allowedRoles={["ROLE_USER","ROLE_ADMIN"]}>
                             <BrandsList />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/user/manage"
+                    element={
+                        <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                            <ManageUsersPage />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/appuser/add"
+                    element={
+                        <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+                            <AddApplicationUserPage />
                         </PrivateRoute>
                     }
                 />

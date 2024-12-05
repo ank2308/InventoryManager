@@ -45,20 +45,25 @@ const Navbar = () => {
                                         Sales Management
                                     </Link>
                                 </li>
-
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/stock/add">
+                                        Add Stock
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/sales/add">
+                                        Add Sale
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/brand/list">
+                                        Brands Details
+                                    </Link>
+                                </li>
                                 {/* Admin-only options */}
-                                {user.roles.includes( "ROLE_ADMIN" ) && (
+                                {user.roles.includes("ROLE_ADMIN") && (
                                     <>
-                                        <li className="nav-item">
-                                            <Link className="nav-link" to="/stock/add">
-                                                Add Stock
-                                            </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                            <Link className="nav-link" to="/sales/add">
-                                                Add Sale
-                                            </Link>
-                                        </li>
+
                                         <li className="nav-item">
                                             <Link className="nav-link" to="/user/add">
                                                 Add User
@@ -70,8 +75,13 @@ const Navbar = () => {
                                             </Link>
                                         </li>
                                         <li className="nav-item">
-                                            <Link className="nav-link" to="/brand/list">
-                                                Brands Details
+                                            <Link className="nav-link" to="/user/manage">
+                                                Manage Users
+                                            </Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/appuser/add">
+                                                Add Application User
                                             </Link>
                                         </li>
                                     </>
@@ -86,7 +96,7 @@ const Navbar = () => {
                             <li className="nav-item">
                                 <span
                                     className="nav-link"
-                                    style={{ cursor: "pointer" }}
+                                    style={{cursor: "pointer"}}
                                     onClick={logout}
                                 >
                                     Logout

@@ -1,7 +1,10 @@
 package com.stockmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 
 import java.util.Date;
 import java.util.List;
@@ -36,6 +39,13 @@ public class User {
     @Column(name = "email", nullable = true)
     private String email;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_address_mapping",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    @JsonManagedReference
+    @JsonProperty
     private List<Address> addresses;
 }
