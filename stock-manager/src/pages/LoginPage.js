@@ -24,10 +24,10 @@ const LoginPage = () => {
             console.log("Login api response: ", response.data);
 
             // Extract token from the response
-            const { token, roles } = response.data;
+            const { token, roles, userId } = response.data;
 
             // Save the token and user info
-            login({ username, token, roles });
+            login({ username, token, roles, userId });
 
             console.log("Redirecting to home page...");
 

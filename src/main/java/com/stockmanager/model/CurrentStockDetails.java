@@ -9,9 +9,9 @@ import lombok.*;
 @Getter
 public class CurrentStockDetails {
     private String brandName;
-    private BrandType brandType;
-    private LiquorQuantity liquorQuantity;
-    private int totalCrateLotQuantityLeft;
+    private String brandType;
+    private String liquorQuantity;
+    private int totalItemsLeft;
     private int totalLiquorQuantityLeft;
     private double totalPrice;
 

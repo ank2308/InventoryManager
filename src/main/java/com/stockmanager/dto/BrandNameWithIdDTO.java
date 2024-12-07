@@ -1,4 +1,4 @@
-package com.stockmanager.model;
+package com.stockmanager.dto;
 
 
 import lombok.AllArgsConstructor;

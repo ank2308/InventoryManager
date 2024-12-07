@@ -29,17 +29,20 @@ public class StockData {
     @Column(name = "Brand_Type", nullable = false)
     private String brandType;
 
-    @Column(name = "Crate_Lot_Size", nullable = false)
-    private int crateLotSize;
+    @Column(name = "Lot_Size", nullable = false)
+    private int lotSize;
 
-    @Column(name = "Crate_Quantity", nullable = false)
-    private int crateQuantity;
+    @Column(name = "Crate_In_Lot", nullable = false)
+    private int crateInLot;
 
-    @Column(name = "Total_Quantity", nullable = true)
-    private int totalQuantity;
+    @Column(name = "Items_In_Crate", nullable = false)
+    private int itemsInCrate;
 
-    @Column(name = "Liquor_Quantity_In_Crate", nullable = false)
-    private int liquorQuantityInCrate;
+    @Column(name = "Total_Liquor_Quantity", nullable = true)
+    private int totalLiquorQuantity;
+
+    @Column(name = "Total_Items", nullable = false)
+    private int totalItems;
 
     @Column(name="MRP", nullable = false)
     private double mrp;
@@ -49,6 +52,12 @@ public class StockData {
 
     @Column(name="Date_Of_Mgf")
     private Date dateOfMgf;
+
+    @Column(name="Quantity_Id")
+    private Long quantityId;
+
+    @Column(name="Brand_Quantity_Id")
+    private Long brandQuantityId;
 
     @Column(name="Date_Entered", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

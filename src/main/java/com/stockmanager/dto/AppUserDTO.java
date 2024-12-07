@@ -1,6 +1,6 @@
-package com.stockmanager.model;
+package com.stockmanager.dto;
 
-import jakarta.persistence.*;
+import com.stockmanager.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

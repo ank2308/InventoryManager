@@ -1,6 +1,5 @@
-package com.stockmanager.model;
+package com.stockmanager.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -17,7 +16,6 @@ public class DayWiseSaleDTO {
     private Long userId;
     private String brandType;
     private String brandName;
-//    private LiquorQuantity liquorQuantity;
     private String liquorQuantity;
     private int quantity;
 

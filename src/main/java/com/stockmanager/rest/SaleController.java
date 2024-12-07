@@ -1,17 +1,14 @@
 package com.stockmanager.rest;
 
+import com.stockmanager.dto.DayWiseSaleDTO;
+import com.stockmanager.dto.SalesRequestDTO;
 import com.stockmanager.model.*;
-import com.stockmanager.service.BrandDetailsService;
 import com.stockmanager.service.DayWiseSaleService;
-import com.stockmanager.service.StockDataService;
-import com.stockmanager.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sale")

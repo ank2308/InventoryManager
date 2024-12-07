@@ -1,6 +1,7 @@
-package com.stockmanager.model;
+package com.stockmanager.dto;
 
 
+import com.stockmanager.model.DateRangeType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

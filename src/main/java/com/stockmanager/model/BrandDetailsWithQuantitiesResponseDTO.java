@@ -24,6 +24,7 @@ public class BrandDetailsWithQuantitiesResponseDTO {
     @Getter
     public static class QuantityWithMrpDTO {
         private Long quantityId;
+        private Long brandQuantityId;
         private String quantityName; // e.g., Glass Bottle
         private int quantity;        // e.g., 750 ml
         private float mrp;           // e.g., 1500.00

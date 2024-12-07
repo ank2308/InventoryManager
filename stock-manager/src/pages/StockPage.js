@@ -19,14 +19,14 @@ const StockPage = () => {
     return (
         <div className="container mt-5">
             {/* Button to Add Stock positioned in the top-right corner */}
-            <div className="d-flex justify-content-end mb-3">
-                <Link to="/stock/add">
-                    <button className="btn btn-primary">Add New Stock</button>
-                </Link>
-            </div>
+            {/*<div className="d-flex justify-content-end mb-3">*/}
+            {/*    <Link to="/stock/add">*/}
+            {/*        <button className="btn btn-primary">Add New Stock</button>*/}
+            {/*    </Link>*/}
+            {/*</div>*/}
 
             <div className="mt-4">
-                <h4>Stock List</h4>
+                <h4>Stock Details</h4>
                 <table className="table table-bordered table-striped">
                     <thead className="thead-dark">
                     <tr>
@@ -34,7 +34,7 @@ const StockPage = () => {
                         <th>Brand Name</th>
                         <th>Brand Type</th>
                         <th>Total Quantity</th>
-                        <th>Price</th>
+                        <th>Amount</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -43,8 +43,8 @@ const StockPage = () => {
                             <td>{index + 1}</td>
                             <td>{stock.brandName}</td>
                             <td>{stock.brandType}</td>
-                            <td>{stock.totalQuantity}</td>
-                            <td>${stock.mrp}</td>
+                            <td>{stock.totalItemsLeft}</td>
+                            <td>Rs. {stock.totalPrice}</td>
                         </tr>
                     ))}
                     </tbody>

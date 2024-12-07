@@ -1,5 +1,7 @@
 package com.stockmanager.service;
 
+import com.stockmanager.dto.DayWiseSaleDTO;
+import com.stockmanager.dto.SalesRequestDTO;
 import com.stockmanager.model.*;
 import com.stockmanager.repository.DayWiseSaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +25,21 @@ public class DayWiseSaleService {
         dayWiseSale.setUserId(dto.getUserId());
         dayWiseSale.setBrandName(dto.getBrandName());
         dayWiseSale.setBrandType(dto.getBrandType());
-        dayWiseSale.setLiquorQuantity(LiquorQuantity.fromString(dto.getLiquorQuantity()));
-        dayWiseSale.setQuantity(dto.getQuantity());
+        dayWiseSale.setItemsSold(dto.getQuantity());
         dayWiseSale.setMrp(dto.getMrp());
         dayWiseSale.setDateOfSale(dto.getDateOfSale());
 
-        // update stock quantity
-        StockData updateStockData = new StockData();
-        updateStockData.setUserId(dayWiseSale.getUserId());
-        updateStockData.setLiquorQuantityInCrate(dayWiseSale.getLiquorQuantity());
-        updateStockData.setTotalQuantity(dayWiseSale.getQuantity());
-        updateStockData.setBrandName(dayWiseSale.getBrandName());
-        updateStockData.setBrandType(dayWiseSale.getBrandType());
-        boolean status = stockDataService.updateStockData(updateStockData);
-        if (!status) {
-            throw new Exception("error while updating exception");
-        }
+//        // update stock quantity
+//        StockData updateStockData = new StockData();
+//        updateStockData.setUserId(dayWiseSale.getUserId());
+//        updateStockData.setLiquorQuantityInCrate(dayWiseSale.getLiquorQuantity());
+//        updateStockData.setTotalQuantity(dayWiseSale.getItemsSold());
+//        updateStockData.setBrandName(dayWiseSale.getBrandName());
+//        updateStockData.setBrandType(dayWiseSale.getBrandType());
+//        boolean status = stockDataService.updateStockData(updateStockData);
+//        if (!status) {
+//            throw new Exception("error while updating exception");
+//        }
 
         DayWiseSale res = dayWiseSaleRepository.save(dayWiseSale);
 
@@ -94,5 +95,15 @@ public class DayWiseSaleService {
     private List<DayWiseSale> getSalesForDateRange(Long userId, Date startDate, Date endDate) {
         // Fetch sales for the custom date range provided
         return dayWiseSaleRepository.findSalesInDateRange(userId, startDate, endDate);
+    }
+
+    private int TotalQuantityUser(Long userId) {
+        List<DayWiseSale> dayWiseSales = dayWiseSaleRepository.findByUserId(userId);
+        var totalQuantity = 0;
+        //Get Total Quantity from dayWiseSales
+        for(DayWiseSale dayWiseSale : dayWiseSales) {
+            totalQuantity = totalQuantity + dayWiseSale.getItemsSold();
+        }
+        return totalQuantity;
     }
 }

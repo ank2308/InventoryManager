@@ -1,9 +1,12 @@
 package com.stockmanager.rest;
 
 import com.stockmanager.model.AppUser;
+import com.stockmanager.model.User;
 import com.stockmanager.repository.AppUserRepository;
+import com.stockmanager.repository.UserDataRepository;
 import com.stockmanager.security.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +26,8 @@ public class AuthController {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    @Autowired
+    private UserDataRepository userDataRepository;
 
     public AuthController(AuthenticationManager authenticationManager, AppUserRepository appUserRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
@@ -67,10 +72,13 @@ public class AuthController {
             String token = jwtUtils.generateToken(appUser.getUsername(), roles);
             String refreshToken = jwtUtils.generateRefreshToken(appUser.getUsername());
 
+            User user = userDataRepository.findByUsername(appUser.getUsername());
+
             return ResponseEntity.ok(Map.of(
                     "token", token,
                     "refreshToken", refreshToken,
-                    "roles", roles
+                    "roles", roles,
+                    "userId", user.getId()
             ));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");

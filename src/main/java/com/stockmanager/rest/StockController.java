@@ -1,5 +1,6 @@
 package com.stockmanager.rest;
 
+import com.stockmanager.dto.BrandStockUserDTO;
 import com.stockmanager.model.*;
 import com.stockmanager.service.BrandDetailsService;
 import com.stockmanager.service.DayWiseSaleService;
@@ -49,10 +50,10 @@ public class StockController {
         return ResponseEntity.ok(brandNameList);
     }
 
-    @GetMapping("/{brandName}")
-    public StockDetails getBrandDetails(@PathVariable String brandName) {
-        return stockDataService.getBrandDetails(brandName);
-    }
+//    @GetMapping("/{brandName}")
+//    public StockDetails getBrandDetails(@PathVariable String brandName) {
+//        return stockDataService.getBrandDetails(brandName);
+//    }
 
     // API to fetch all brand types (distinct)
     @CrossOrigin(origins = "http://localhost:3000")
@@ -64,14 +65,14 @@ public class StockController {
     // API to fetch all brand types (distinct)
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/brands/types/{brandType}/{userId}")
-    public  Map<String, List<String>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
+    public  Map<String, List<Quantity>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
         return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
     }
 
 
-    @GetMapping("/available-liquor-quantities")
-    public List<LiquorQuantity> getAvailableLiquorQuantities() {
-        // need to add brand name and user id as parameter
-        return stockDataService.getAvailableLiquorQuantities();
-    }
+//    @GetMapping("/available-liquor-quantities")
+//    public List<LiquorQuantity> getAvailableLiquorQuantities() {
+//        // need to add brand name and user id as parameter
+//        return stockDataService.getAvailableLiquorQuantities();
+//    }
 }

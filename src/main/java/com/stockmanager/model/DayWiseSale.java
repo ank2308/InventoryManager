@@ -28,11 +28,11 @@ public class DayWiseSale {
     @Column(name = "Brand_Type", nullable = false)
     private String brandType;
 
-    @Column(name = "Liquor_Quantity", nullable = false)
-    private int liquorQuantity;
+    @Column(name = "Brand_Quantity_Id", nullable = false)
+    private int brandQuantityId;
 
-    @Column(name="Quantity", nullable = false)
-    private int quantity;
+    @Column(name="Items_Sold", nullable = false)
+    private int itemsSold;
 
     @Column(name="MRP", nullable = false)
     private double mrp;

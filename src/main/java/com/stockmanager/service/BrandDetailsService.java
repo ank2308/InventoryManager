@@ -1,5 +1,7 @@
 package com.stockmanager.service;
 
+import com.stockmanager.dto.BrandNameWithIdDTO;
+import com.stockmanager.dto.BrandStockUserDTO;
 import com.stockmanager.exception.DuplicateBrandNameException;
 import com.stockmanager.model.*;
 import com.stockmanager.repository.BrandDetailsRepository;
@@ -12,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -105,14 +106,12 @@ public class BrandDetailsService {
         return stockDataRepository.findAvailableBrandTypesByUserId(userId);
     }
 
-    public Map<String, List<String>> getAllBrandNamesByUserIdByBrandType(Long userId, String brandType) {
+    public Map<String, List<Quantity>> getAllBrandNamesByUserIdByBrandType(Long userId, String brandType) {
          List<Object[]> results = stockDataRepository.findAvailableBrandNamesByUserIdByBrandType(userId, brandType);
-         Map<String, List<String>> map = new HashMap<>();
+         Map<String, List<Quantity>> map = new HashMap<>();
          for (Object[] stockData : results) {
              String brandName = (String) stockData[0];
-             int liquorQuantityInCrate = (Integer) stockData[1];
-             map.computeIfAbsent(brandName, k -> new ArrayList<>())
-                     .add(LiquorQuantity.fromInt(liquorQuantityInCrate).name());
+             map.put(brandName, brandDetailsRepository.findQuantitiesByBrandName(brandName));
          }
          return map;
     }
@@ -158,6 +157,7 @@ public class BrandDetailsService {
                     dto.setQuantityName(mapping.getQuantity().getQuantityName());
                     dto.setQuantity(mapping.getQuantity().getQuantity());
                     dto.setMrp(mapping.getMrp());
+                    dto.setBrandQuantityId(mapping.getId());
                     return dto;
                 })
                 .toList();

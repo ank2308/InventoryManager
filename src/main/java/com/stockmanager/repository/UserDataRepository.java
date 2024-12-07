@@ -17,6 +17,8 @@ public interface UserDataRepository extends JpaRepository<User, Long> {
     // Check if a username already exists
     boolean existsByUsername(String username);
 
+    User findByUsername(String username);
+
     // Fetch paginated users
     @Override
     Page<User> findAll(Pageable pageable);

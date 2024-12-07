@@ -16,4 +16,6 @@ public interface DayWiseSaleRepository extends JpaRepository<DayWiseSale, Long> 
     // Custom query to fetch sales for a specific user within a date range
     @Query("SELECT d FROM DayWiseSale d WHERE d.userId = :userId AND d.dateOfSale BETWEEN :startDate AND :endDate")
     List<DayWiseSale> findSalesInDateRange(Long userId, Date startDate, Date endDate);
+
+    List<DayWiseSale> findByUserId(Long userId);
 }

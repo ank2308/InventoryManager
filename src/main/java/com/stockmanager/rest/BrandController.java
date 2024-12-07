@@ -1,11 +1,9 @@
 package com.stockmanager.rest;
 
+import com.stockmanager.dto.BrandNameWithIdDTO;
 import com.stockmanager.exception.DuplicateBrandNameException;
 import com.stockmanager.model.*;
 import com.stockmanager.service.BrandDetailsService;
-import com.stockmanager.service.DayWiseSaleService;
-import com.stockmanager.service.StockDataService;
-import com.stockmanager.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -102,7 +100,7 @@ public class BrandController {
     // API to fetch all brand types (distinct)
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/brands/types/{brandType}/{userId}")
-    public  Map<String, List<String>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
+    public  Map<String, List<Quantity>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
         return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
     }
 

@@ -1,8 +1,9 @@
 // src/components/StockForm.js
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { addStock, getBrandTypesForAvailableStocks } from '../services/stocksApi';
 import { getBrandTypes, getBrandNamesByType, getBrandDetailsById } from '../services/brandApi';
 import Select from 'react-select';
+import AuthContext from "../context/AuthContext";
 
 const StockForm = () => {
     const [brandTypes, setBrandTypes] = useState([]);
@@ -14,16 +15,23 @@ const StockForm = () => {
     const [liquorQuantities, setLiquorQuantities] = useState([]);
     const [selectedLiquorQuantity, setSelectedLiquorQuantity] = useState(null);
 
+    const {user} = useContext(AuthContext);
+
     const [stockData, setStockData] = useState({
+        userId: "",
         brandName: '',
         brandType: '',
-        crateLotSize: 0,
-        crateQuantity: 0,
-        liquorQuantityInCrate: '',
+        lotSize: 0,
+        crateInLot: 0,
+        itemsInCrate: 0,
+        quantityId: '',
+        brandQuantityId:'',
         mrp: 0.0,
         marginPrice: 0.0,
         dateOfMgf: '',
     });
+
+
 
     const [isFormValid, setIsFormValid] = useState(false);
 
@@ -50,7 +58,7 @@ const StockForm = () => {
             ...prevState,
             brandType: selectedOption.value,
             brandName: '', // Reset brand name
-            liquorQuantityInCrate: '', // Reset liquor quantity
+            quantityId: '',
             mrp: 0.0, // Reset MRP
         }));
 
@@ -70,17 +78,19 @@ const StockForm = () => {
         setStockData((prevState) => ({
             ...prevState,
             brandName: selectedOption.label,
-            liquorQuantityInCrate: '', // Reset liquor quantity
+            quantityId: '',
             mrp: 0.0, // Reset MRP
         }));
 
         try {
             const brandDetails = await getBrandDetailsById(selectedOption.value); // Fetch brand details
+            console.log("Selected brand Details", brandDetails);
             setLiquorQuantities(
                 brandDetails.quantityMappings.map((quantity) => ({
                     value: quantity.quantityId,
                     label: `${quantity.quantityName} - ${quantity.quantity} ml`,
                     mrp: quantity.mrp, // Include MRP for dynamic updates
+                    quantityBrandId: quantity.brandQuantityId,
                 }))
             );
         } catch (error) {
@@ -90,22 +100,26 @@ const StockForm = () => {
 
     // Validate the form
     useEffect(() => {
-        const { brandType, brandName, crateLotSize, crateQuantity, liquorQuantityInCrate, mrp, dateOfMgf } = stockData;
-        setIsFormValid(brandType && brandName && crateLotSize && crateQuantity && liquorQuantityInCrate && mrp && dateOfMgf);
+        const { brandType, brandName, lotSize, crateInLot, itemsInCrate, quantityId, mrp, dateOfMgf } = stockData;
+        setIsFormValid(brandType && brandName && lotSize && itemsInCrate && crateInLot && quantityId && mrp && dateOfMgf);
     }, [stockData]);
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("UserId ", user)
         try {
-            await addStock({ ...stockData, userId: 1 });
+            console.log("StockData", stockData);
+            await addStock({ ...stockData, userId: user.userId });
             alert('Stock added successfully!');
             setStockData({
                 brandName: '',
                 brandType: '',
-                crateLotSize: 0,
-                crateQuantity: 0,
-                liquorQuantityInCrate: '',
+                lotSize: 0,
+                crateInLot: 0,
+                itemsInCrate: 0,
+                quantityId: '',
+                brandQuantityId:'',
                 mrp: 0.0,
                 marginPrice: 0.0,
                 dateOfMgf: '',
@@ -154,9 +168,11 @@ const StockForm = () => {
                         value={selectedLiquorQuantity}
                         onChange={(selectedOption) => {
                             setSelectedLiquorQuantity(selectedOption);
+                            console.log("Selected liquor quantity ", selectedOption);
                             setStockData((prevState) => ({
                                 ...prevState,
-                                liquorQuantityInCrate: selectedOption.label,
+                                quantityId: selectedOption.value,
+                                brandQuantityId: selectedOption.quantityBrandId,
                                 mrp: selectedOption.mrp, // Dynamically update MRP
                             }));
                         }}
@@ -168,28 +184,39 @@ const StockForm = () => {
                 {/* Additional Fields */}
                 <div className="form-group mt-3">
                     <label>Price (MRP)</label>
-                    <input type="number" className="form-control" name="mrp" value={stockData.mrp} readOnly />
+                    <input type="number" className="form-control" name="mrp" value={stockData.mrp} readOnly/>
                 </div>
 
                 <div className="form-group mt-3">
-                    <label>Crate Lot Size</label>
+                    <label>Items in Crate</label>
                     <input
                         type="number"
                         className="form-control"
-                        name="crateLotSize"
-                        value={stockData.crateLotSize}
-                        onChange={(e) => setStockData({ ...stockData, crateLotSize: e.target.value })}
+                        name="itemsInCrate"
+                        value={stockData.itemsInCrate}
+                        onChange={(e) => setStockData({...stockData, itemsInCrate: e.target.value})}
                     />
                 </div>
 
                 <div className="form-group mt-3">
-                    <label>Crate Quantity</label>
+                    <label>Crate in Lots</label>
                     <input
                         type="number"
                         className="form-control"
-                        name="crateQuantity"
-                        value={stockData.crateQuantity}
-                        onChange={(e) => setStockData({ ...stockData, crateQuantity: e.target.value })}
+                        name="crateInLot"
+                        value={stockData.crateInLot}
+                        onChange={(e) => setStockData({...stockData, crateInLot: e.target.value})}
+                    />
+                </div>
+
+                <div className="form-group mt-3">
+                    <label>No of Lots</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        name="lotSize"
+                        value={stockData.lotSize}
+                        onChange={(e) => setStockData({...stockData, lotSize: e.target.value})}
                     />
                 </div>
 
@@ -200,7 +227,7 @@ const StockForm = () => {
                         className="form-control"
                         name="marginPrice"
                         value={stockData.marginPrice}
-                        onChange={(e) => setStockData({ ...stockData, marginPrice: e.target.value })}
+                        onChange={(e) => setStockData({...stockData, marginPrice: e.target.value})}
                     />
                 </div>
 
@@ -211,7 +238,7 @@ const StockForm = () => {
                         className="form-control"
                         name="dateOfMgf"
                         value={stockData.dateOfMgf}
-                        onChange={(e) => setStockData({ ...stockData, dateOfMgf: e.target.value })}
+                        onChange={(e) => setStockData({...stockData, dateOfMgf: e.target.value})}
                     />
                 </div>
 
