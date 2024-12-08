@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getBrandNamesForAvailableStocks, getBrandTypesForAvailableStocks } from '../services/stocksApi';
+import Select from 'react-select'; // Import react-select
+import {
+    getBrandNamesForAvailableStocks,
+    getBrandTypesForAvailableStocks,
+    getQuantitiesForAvailableStocks
+} from '../services/stocksApi';
 import { addSale } from '../services/saleApi';
+import {getBrandDetailsById} from "../services/brandApi";
 
 const SalesForm = () => {
     const [saleData, setSaleData] = useState({
@@ -8,15 +14,20 @@ const SalesForm = () => {
         userId: '',
         brandType: '',
         brandName: '',
-        liquorQuantity: '',
+        quantityId: '',
         quantity: 0,
         mrp: 0.0,
         dateOfSale: '',
     });
 
     const [brandTypes, setBrandTypes] = useState([]);
+    const [selectedBrandType, setSelectedBrandType] = useState(null);
+
     const [brandNames, setBrandNames] = useState([]);
-    const [brandTypeData, setBrandTypeData] = useState({});
+    const [selectedBrandName, setSelectedBrandName] = useState(null);
+
+    const [liquorQuantities, setLiquorQuantities] = useState([]);
+    const [selectedLiquorQuantity, setSelectedLiquorQuantity] = useState(null);
     const [isFormValid, setIsFormValid] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -26,7 +37,7 @@ const SalesForm = () => {
         const fetchBrandTypes = async () => {
             try {
                 const data = await getBrandTypesForAvailableStocks(user.userId);
-                setBrandTypes(data);
+                setBrandTypes(data.map((type) => ({ value: type, label: type }))); // Format for react-select
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching brand types:', error);
@@ -36,24 +47,59 @@ const SalesForm = () => {
         fetchBrandTypes();
     }, [user.userId]);
 
-    useEffect(() => {
-        const fetchBrandNames = async () => {
-            if (saleData.brandType) {
-                try {
-                    const data = await getBrandNamesForAvailableStocks(user.userId, saleData.brandType);
-                    setBrandNames(Object.keys(data)); // Extract brand names as keys
-                    setBrandTypeData(data); // Store the full map for quantities
-                } catch (error) {
-                    console.error('Error fetching brand names:', error);
-                }
-            }
-        };
-        fetchBrandNames();
-    }, [saleData.brandType, user.userId]);
+    const handleBrandTypeChange = async (selectedOption) => {
+        setSelectedBrandName(null);
+        setSelectedLiquorQuantity(null);
+        setLiquorQuantities([]);
+        setSelectedBrandType(selectedOption);
+        setSaleData((prevState) => ({
+            ...prevState,
+            brandType: selectedOption.value,
+            brandName: '', // Reset brand name
+            quantityId: '',
+            quantity: 0,
+            mrp: 0.0,
+            dateOfSale: '',
+        }))
+        try {
+            const response = await getBrandNamesForAvailableStocks(user.userId, selectedOption.value);
+            setBrandNames(response); // Format for react-select
+        } catch (error) {
+            console.error('Error fetching brand names:', error);
+        }
+
+    }
+
+    const handleBrandNameChange = async (selectedOption) => {
+        setSelectedLiquorQuantity(null);
+        setLiquorQuantities([]);
+        setSelectedBrandName(selectedOption);
+        setSaleData((prevState) => ({
+            ...prevState,
+            brandName: selectedOption.value,
+            quantityId: '',
+            quantity: 0,
+            mrp: 0.0,
+            dateOfSale: '',
+        }));
+
+        try {
+            const quantity = await getQuantitiesForAvailableStocks(selectedBrandType.value, user.userId, selectedOption.value); // Fetch brand details
+            setLiquorQuantities(
+                quantity.map((quantity) => ({
+                    value: quantity.id,
+                    label: `${quantity.quantityName} - ${quantity.quantity} ml`,
+                }))
+            );
+        } catch (error) {
+            console.error("Error fetching brand details:", error);
+        }
+    };
 
     useEffect(() => {
-        const { brandType, brandName, liquorQuantity, quantity, mrp, dateOfSale } = saleData;
-        setIsFormValid(brandType && brandName && liquorQuantity && quantity > 0 && mrp > 0 && dateOfSale);
+        const { brandType, brandName, quantityId, quantity, mrp, dateOfSale } = saleData;
+        setIsFormValid(brandType && brandName && quantityId && quantity > 0 && mrp > 0 && dateOfSale);
+        console.log("Sale Data", saleData);
     }, [saleData]);
 
     const handleInputChange = (e) => {
@@ -74,7 +120,7 @@ const SalesForm = () => {
                 userId: '',
                 brandType: '',
                 brandName: '',
-                liquorQuantity: '',
+                quantityId: '',
                 quantity: 0,
                 mrp: 0.0,
                 dateOfSale: '',
@@ -89,69 +135,59 @@ const SalesForm = () => {
         <div className="container mt-5">
             <h2>Sales Form</h2>
             <form onSubmit={handleSubmit}>
+                {/* Brand Type */}
                 <div className="form-group">
                     <label htmlFor="brandType">Brand Type</label>
                     {loading ? (
                         <p>Loading brand types...</p>
                     ) : (
-                        <select
+                        <Select
                             id="brandType"
-                            className="form-control"
                             name="brandType"
-                            value={saleData.brandType}
-                            onChange={handleInputChange}
-                            required
-                        >
-                            <option value="">Select Brand Type</option>
-                            {brandTypes.map((type, index) => (
-                                <option key={index} value={type}>
-                                    {type}
-                                </option>
-                            ))}
-                        </select>
+                            options={brandTypes}
+                            value={selectedBrandType}
+                            onChange={handleBrandTypeChange}
+                            placeholder="Select Brand Type"
+                            isClearable
+                        />
                     )}
                 </div>
 
+                {/* Brand Name */}
                 <div className="form-group mt-3">
                     <label htmlFor="brandName">Brand Name</label>
-                    <select
+                    <Select
                         id="brandName"
-                        className="form-control"
                         name="brandName"
-                        value={saleData.brandName}
-                        onChange={handleInputChange}
-                        disabled={!saleData.brandType}
-                        required={!!saleData.brandType}
-                    >
-                        <option value="">Select Brand Name</option>
-                        {brandNames.map((name, index) => (
-                            <option key={index} value={name}>
-                                {name}
-                            </option>
-                        ))}
-                    </select>
+                        options={brandNames}
+                        value={selectedBrandName}
+                        onChange={handleBrandNameChange}
+                        placeholder="Select Brand Name"
+                        isClearable
+                        isDisabled={!saleData.brandType} // Disable until brand type is selected
+                    />
                 </div>
 
+                {/* Liquor Quantity */}
                 <div className="form-group mt-3">
                     <label htmlFor="liquorQuantity">Liquor Quantity</label>
-                    <select
-                        id="liquorQuantity"
-                        className="form-control"
-                        name="liquorQuantity"
-                        value={saleData.liquorQuantity}
-                        onChange={handleInputChange}
-                        disabled={!saleData.brandName}
-                        required={!!saleData.brandName}
-                    >
-                        <option value="">Select Liquor Quantity</option>
-                        {brandTypeData[saleData.brandName]?.map((item, index) => (
-                            <option key={index} value={item.id}>
-                                {item.displayValue}
-                            </option>
-                        ))}
-                    </select>
+                    <Select
+                        options={liquorQuantities}
+                        value={selectedLiquorQuantity}
+                        onChange={(selectedOption) => {
+                            setSelectedLiquorQuantity(selectedOption);
+                            console.log("Selected liquor quantity ", selectedOption.value);
+                            setSaleData((prevState) => ({
+                                ...prevState,
+                                quantityId: selectedOption.value,
+                            }));
+                        }}
+                        placeholder="Select or search Liquor Quantity"
+                        isDisabled={!liquorQuantities.length}
+                    />
                 </div>
 
+                {/* Quantity */}
                 <div className="form-group mt-3">
                     <label htmlFor="quantity">Quantity</label>
                     <input
@@ -165,6 +201,7 @@ const SalesForm = () => {
                     />
                 </div>
 
+                {/* MRP */}
                 <div className="form-group mt-3">
                     <label htmlFor="mrp">MRP</label>
                     <input
@@ -178,6 +215,7 @@ const SalesForm = () => {
                     />
                 </div>
 
+                {/* Date of Sale */}
                 <div className="form-group mt-3">
                     <label htmlFor="dateOfSale">Date of Sale</label>
                     <input

@@ -33,6 +33,9 @@ public class BrandDetailsService {
     @Autowired
     private QuantityRepository quantityRepository;
 
+    @Autowired
+    private QuantityService quantityService;
+
     // Fetch all brand details
     public Page<BrandDetails> getAllBrands(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -106,14 +109,13 @@ public class BrandDetailsService {
         return stockDataRepository.findAvailableBrandTypesByUserId(userId);
     }
 
-    public Map<String, List<Quantity>> getAllBrandNamesByUserIdByBrandType(Long userId, String brandType) {
-         List<Object[]> results = stockDataRepository.findAvailableBrandNamesByUserIdByBrandType(userId, brandType);
-         Map<String, List<Quantity>> map = new HashMap<>();
-         for (Object[] stockData : results) {
-             String brandName = (String) stockData[0];
-             map.put(brandName, brandDetailsRepository.findQuantitiesByBrandName(brandName));
-         }
-         return map;
+    public List<String> getAllBrandNamesByUserIdByBrandType(Long userId, String brandType) {
+         return stockDataRepository.findAvailableBrandNamesByUserIdByBrandType(userId, brandType);
+    }
+
+    public List<Quantity> getAllQuantitiesByUserIdByBrandTypeByBrandName(Long userId, String brandType, String brandName) {
+        List<Long> quantityId = stockDataRepository.findAvailableBrandNamesByUserIdByBrandTypeByBrandName(userId, brandType, brandName);
+        return quantityService.getAllQuantitiesById(quantityId);
     }
 
     public List<String> getAllBrandTypes() {

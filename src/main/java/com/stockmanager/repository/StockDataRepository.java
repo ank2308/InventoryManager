@@ -17,9 +17,14 @@ public interface StockDataRepository extends JpaRepository<StockData, Long> {
     List<String> findAvailableBrandTypesByUserId(Long userId);
 
     // Custom query to find distinct brand name for a specific user and brand type where stock is available
-    @Query("SELECT s.brandName, s.totalLiquorQuantity, s.brandQuantityId FROM StockData s WHERE (s.totalItems > 0) AND s.userId = :userId AND s.brandType = :brandType")
-    List<Object[]> findAvailableBrandNamesByUserIdByBrandType(Long userId, String brandType);
+    @Query("SELECT s.brandName FROM StockData s WHERE (s.totalItems > 0) AND s.userId = :userId AND s.brandType = :brandType")
+    List<String> findAvailableBrandNamesByUserIdByBrandType(Long userId, String brandType);
+
+    @Query("SELECT s.quantityId FROM StockData s WHERE (s.totalItems > 0) AND s.userId = :userId AND s.brandType = :brandType AND s.brandName = :brandName")
+    List<Long> findAvailableBrandNamesByUserIdByBrandTypeByBrandName(Long userId, String brandType, String brandName);
 
     StockData findByUserIdAndBrandQuantityId(Long userId, Long brandQuantityId);
+
+    StockData findByUserIdAndBrandTypeAndBrandNameAndQuantityId(Long userId, String brandType, String brandName, Long quantityId);
 
 }

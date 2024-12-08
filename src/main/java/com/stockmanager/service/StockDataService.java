@@ -107,28 +107,29 @@ public class StockDataService {
 //        return availableQuantities;
 //    }
 
-//    public boolean updateStockData(StockData stockData) {
-//        List<StockData> currentStocks = stockDataRepository.findByUserIdAndBrandNameAndLiquorQuantityInCrate(
-//                stockData.getUserId(),
-//                stockData.getBrandName(),
-//                stockData.getLiquorQuantityInCrate());
-//        if (currentStocks.size()> 0) {
-//            StockData currentStock = currentStocks.get(0);
-////            int currentQuantityLeftInStock = currentStock.getCrateLotSize() * currentStock.getCrateQuantity();
-//            if(stockData.getTotalQuantity() > currentStock.getCrateLotSize()) {
-//                int numOfCrate = stockData.getTotalQuantity()/currentStock.getCrateLotSize();
-////                int quantityLeft = stockData.getTotalQuantity() - currentStock.getCrateLotSize() * numOfCrate;
-//                currentStock.setCrateQuantity(currentStock.getCrateQuantity() - numOfCrate);
-//                currentStock.setTotalQuantity(currentStock.getTotalQuantity() - stockData.getTotalQuantity());
-//                stockDataRepository.save(currentStock);
-//            } else if(stockData.getTotalQuantity() < currentStock.getCrateLotSize()) {
-//                currentStock.setTotalQuantity(currentStock.getTotalQuantity() - stockData.getTotalQuantity());
-//                stockDataRepository.save(currentStock);
-//            } else {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
+    public boolean updateStockData(StockData currentStock) {
+        StockData stockData = stockDataRepository.findByUserIdAndBrandTypeAndBrandNameAndQuantityId(
+                currentStock.getUserId(),
+                currentStock.getBrandType(),
+                currentStock.getBrandName(),
+                currentStock.getQuantityId());
+        if (stockData != null) {
+
+            if(stockData.getTotalItems() >= currentStock.getTotalItems()) {
+                int updatedTotalItems = stockData.getTotalItems() - currentStock.getTotalItems();
+                stockData.setTotalItems(updatedTotalItems);
+                if(stockData.getTotalItems() > 0) {
+                    int updatedLots = (int) Math.ceil(stockData.getLotSize() / stockData.getTotalItems());
+                    stockData.setLotSize(updatedLots);
+                } else {
+                    stockData.setLotSize(0);
+                }
+                stockDataRepository.save(stockData);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

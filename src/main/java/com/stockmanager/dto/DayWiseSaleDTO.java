@@ -16,7 +16,7 @@ public class DayWiseSaleDTO {
     private Long userId;
     private String brandType;
     private String brandName;
-    private String liquorQuantity;
+    private Long quantityId;
     private int quantity;
 
     private double mrp;

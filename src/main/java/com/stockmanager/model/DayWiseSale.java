@@ -28,8 +28,8 @@ public class DayWiseSale {
     @Column(name = "Brand_Type", nullable = false)
     private String brandType;
 
-    @Column(name = "Brand_Quantity_Id", nullable = false)
-    private int brandQuantityId;
+    @Column(name = "Quantity_Id", nullable = false)
+    private int quantityId;
 
     @Column(name="Items_Sold", nullable = false)
     private int itemsSold;

@@ -65,7 +65,7 @@ public class StockController {
     // API to fetch all brand types (distinct)
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/brands/types/{brandType}/{userId}")
-    public  Map<String, List<Quantity>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
+    public  List<String> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
         return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
     }
 

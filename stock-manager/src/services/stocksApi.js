@@ -29,18 +29,28 @@ export const getBrandNamesForAvailableStocks = async (userId, brandType) => {
     try{
         const response = await axiosInstance.get(`/api/stocks/brands/types/${brandType}/${userId}`);
 
-        // Transform the response (Map<String, List<Quantity>>) into a usable format
-        const brandData = {};
-        for (const [brandName, quantities] of Object.entries(response.data)) {
-            brandData[brandName] = quantities.map((quantity) => ({
-                id: quantity.id,
-                displayValue: `${quantity.quantityName} - ${quantity.quantity}`, // Combine quantityName and quantity
-            }));
-        }
-        return brandData;
+        console.log("Response by axios:", response);
+
+        // Map response data into dropdown-compatible options
+        return response.data.map((brand) => ({
+            value: brand, // Use brandId as the value
+            label: brand, // Use brandName as the label
+        }));
     } catch (error) {
         console.error('Error fetching brand types:', error);
         throw error; // Re-throw the error to handle it in the component
+    }
+};
+
+export const getQuantitiesForAvailableStocks = async (brandType, userId, brandName) => {
+    try {
+        const response = await axiosInstance.get(`/api/brands/types/${brandType}/${userId}/${brandName}`);
+        console.log("Quantity", response.data);
+
+        return response.data; // Returns the full BrandDetailsWithQuantitiesResponseDTO object
+    } catch (error) {
+        console.error("Error fetching brand details:", error);
+        throw error; // Re-throw error to handle it in calling code
     }
 };
 

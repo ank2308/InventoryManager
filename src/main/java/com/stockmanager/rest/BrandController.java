@@ -97,13 +97,6 @@ public class BrandController {
         return brandDetailsService.getAllBrandTypesByUserId(userId);
     }
 
-    // API to fetch all brand types (distinct)
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/brands/types/{brandType}/{userId}")
-    public  Map<String, List<Quantity>> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
-        return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
-    }
-
     @GetMapping("search")
     public ResponseEntity<List<BrandDetails>> searchBrands(@RequestParam String brandName) {
         List<BrandDetails> brands = brandDetailsService.findByNameContaining(brandName);
@@ -116,6 +109,12 @@ public class BrandController {
         return ResponseEntity.ok(suggestions);
     }
 
+    // API to fetch all quantites (distinct)
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/types/{brandType}/{userId}/{brandName}")
+    public  List<Quantity> getAllQuantitiesByUserIdByBrandTypeByBrandName(@PathVariable String brandType, @PathVariable Long userId, @PathVariable String brandName) {
+        return brandDetailsService.getAllQuantitiesByUserIdByBrandTypeByBrandName(userId, brandType, brandName);
+    }
 
     @ExceptionHandler(DuplicateBrandNameException.class)
     public ResponseEntity<String> handleDuplicateBrandNameException(DuplicateBrandNameException ex) {

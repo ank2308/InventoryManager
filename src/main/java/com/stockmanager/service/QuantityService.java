@@ -18,4 +18,8 @@ public class QuantityService {
         return quantityRepository.findAll();
     }
 
+    public List<Quantity> getAllQuantitiesById(List<Long> ids) {
+        return quantityRepository.findAllById(ids);
+    }
+
 }

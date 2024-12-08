@@ -26,20 +26,21 @@ public class DayWiseSaleService {
         dayWiseSale.setBrandName(dto.getBrandName());
         dayWiseSale.setBrandType(dto.getBrandType());
         dayWiseSale.setItemsSold(dto.getQuantity());
+        dayWiseSale.setQuantityId(dto.getQuantity());
         dayWiseSale.setMrp(dto.getMrp());
         dayWiseSale.setDateOfSale(dto.getDateOfSale());
 
-//        // update stock quantity
-//        StockData updateStockData = new StockData();
-//        updateStockData.setUserId(dayWiseSale.getUserId());
-//        updateStockData.setLiquorQuantityInCrate(dayWiseSale.getLiquorQuantity());
-//        updateStockData.setTotalQuantity(dayWiseSale.getItemsSold());
-//        updateStockData.setBrandName(dayWiseSale.getBrandName());
-//        updateStockData.setBrandType(dayWiseSale.getBrandType());
-//        boolean status = stockDataService.updateStockData(updateStockData);
-//        if (!status) {
-//            throw new Exception("error while updating exception");
-//        }
+        // update stock quantity
+        StockData updateStockData = new StockData();
+        updateStockData.setUserId(dayWiseSale.getUserId());
+        updateStockData.setQuantityId(dto.getQuantityId());
+        updateStockData.setTotalItems(dto.getQuantity());
+        updateStockData.setBrandName(dayWiseSale.getBrandName());
+        updateStockData.setBrandType(dayWiseSale.getBrandType());
+        boolean status = stockDataService.updateStockData(updateStockData);
+        if (!status) {
+            throw new Exception("error while updating exception");
+        }
 
         DayWiseSale res = dayWiseSaleRepository.save(dayWiseSale);
 
