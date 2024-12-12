@@ -72,14 +72,24 @@ public class AuthController {
             String token = jwtUtils.generateToken(appUser.getUsername(), roles);
             String refreshToken = jwtUtils.generateRefreshToken(appUser.getUsername());
 
-            User user = userDataRepository.findByUsername(appUser.getUsername());
+            if(!roles.contains("ROLE_ADMIN")) {
+                User user = userDataRepository.findByUsername(appUser.getUsername());
+                return ResponseEntity.ok(Map.of(
+                        "token", token,
+                        "refreshToken", refreshToken,
+                        "roles", roles,
+                        "userId", user.getId()
+                ));
+            } else {
+                return ResponseEntity.ok(Map.of(
+                        "token", token,
+                        "refreshToken", refreshToken,
+                        "roles", roles,
+                        "userId", 0
+                ));
+            }
 
-            return ResponseEntity.ok(Map.of(
-                    "token", token,
-                    "refreshToken", refreshToken,
-                    "roles", roles,
-                    "userId", user.getId()
-            ));
+
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }

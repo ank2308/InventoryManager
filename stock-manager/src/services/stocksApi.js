@@ -3,9 +3,10 @@
 import axiosInstance from "./axiosInstance";
 
 // Fetch stock items
-export const getStocks = async () => {
+export const getStocks = async (stockRequestDTO) => {
     try {
-        const response = await axiosInstance.get("/api/stocks/details");
+        console.log("Stock Request DTo", stockRequestDTO);
+        const response = await axiosInstance.post(`/api/stocks/details`, stockRequestDTO);
         console.log("Stock Data {}", response);
         return response.data;
     } catch (error) {

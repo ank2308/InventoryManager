@@ -29,6 +29,7 @@ public class SaleController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/list")
     public List<DayWiseSale> getSales(@RequestBody SalesRequestDTO requestDTO) {
-        return dayWiseSaleService.getSales(requestDTO);
+        var data = dayWiseSaleService.getSales(requestDTO);
+        return data;
     }
 }

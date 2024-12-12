@@ -22,4 +22,8 @@ public class QuantityService {
         return quantityRepository.findAllById(ids);
     }
 
+    public Quantity getQuantityById(Long id) {
+        return quantityRepository.findById(id).get();
+    }
+
 }

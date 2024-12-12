@@ -30,8 +30,8 @@ axiosInstance.interceptors.response.use(
         const navigate = useNavigate();
         if (error.response?.status === 401) {
             // Redirect to login if unauthorized
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
+            sessionStorage.removeItem("user");
+            sessionStorage.removeItem("token");
             navigate("/login");
         }
         return Promise.reject(error);

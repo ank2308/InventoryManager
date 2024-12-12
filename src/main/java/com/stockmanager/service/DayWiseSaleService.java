@@ -4,9 +4,13 @@ import com.stockmanager.dto.DayWiseSaleDTO;
 import com.stockmanager.dto.SalesRequestDTO;
 import com.stockmanager.model.*;
 import com.stockmanager.repository.DayWiseSaleRepository;
+import com.stockmanager.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +24,11 @@ public class DayWiseSaleService {
     @Autowired
     private StockDataService stockDataService;
 
+    @Autowired
+    private DateUtil dateUtil;
+
+    
+
     public Long addDayWiseSale(DayWiseSaleDTO dto) throws Exception {
         DayWiseSale dayWiseSale = new DayWiseSale();
         dayWiseSale.setUserId(dto.getUserId());
@@ -28,7 +37,7 @@ public class DayWiseSaleService {
         dayWiseSale.setItemsSold(dto.getQuantity());
         dayWiseSale.setQuantityId(dto.getQuantity());
         dayWiseSale.setMrp(dto.getMrp());
-        dayWiseSale.setDateOfSale(dto.getDateOfSale());
+        dayWiseSale.setDateOfSale(dateUtil.parseDate(dto.getDateOfSale()));
 
         // update stock quantity
         StockData updateStockData = new StockData();
@@ -68,34 +77,36 @@ public class DayWiseSaleService {
 
     // Get sales for today
     private List<DayWiseSale> getSalesForToday(Long userId) {
-        Date today = new Date();
-        return dayWiseSaleRepository.findByUserIdAndDateOfSale(userId, today);
+        Date today = dateUtil.parseDate(new Date());
+        var todaySale = dayWiseSaleRepository.findByUserIdAndDateOfSale(userId, today);
+        return todaySale;
     }
 
     // Get sales for the last week
     private List<DayWiseSale> getSalesForLastWeek(Long userId) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -7);
-        Date lastWeekStart = calendar.getTime();
+        Date lastWeekStart = dateUtil.parseDate(calendar.getTime());
+
 
         // Fetch sales from last week's start date to today
-        return dayWiseSaleRepository.findSalesInDateRange(userId, lastWeekStart, new Date());
+        return dayWiseSaleRepository.findSalesInDateRange(userId, lastWeekStart, dateUtil.parseDate(new Date()));
     }
 
     // Get sales for the last month
     private List<DayWiseSale> getSalesForLastMonth(Long userId) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1);
-        Date lastMonthStart = calendar.getTime();
+        Date lastMonthStart = dateUtil.parseDate(calendar.getTime());
 
         // Fetch sales from last month's start date to today
-        return dayWiseSaleRepository.findSalesInDateRange(userId, lastMonthStart, new Date());
+        return dayWiseSaleRepository.findSalesInDateRange(userId, lastMonthStart, dateUtil.parseDate(new Date()));
     }
 
     // Get sales for a custom date range
     private List<DayWiseSale> getSalesForDateRange(Long userId, Date startDate, Date endDate) {
         // Fetch sales for the custom date range provided
-        return dayWiseSaleRepository.findSalesInDateRange(userId, startDate, endDate);
+        return dayWiseSaleRepository.findSalesInDateRange(userId, dateUtil.parseDate(startDate), dateUtil.parseDate(endDate));
     }
 
     private int TotalQuantityUser(Long userId) {

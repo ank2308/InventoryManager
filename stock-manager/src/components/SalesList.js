@@ -1,14 +1,56 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, {useEffect, useState} from 'react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {getQuantity, getSales} from "../services/saleApi";
 
 const SaleList = ({ userId }) => {
-    const [salesData, setSalesData] = useState([]);
+    const [saleData, setSaleData] = useState({
+        userId: '',
+        brandName: '',
+        brandType: '',
+        quantity: '',
+        itemsSold: 0,
+        mrp: 0.0,
+        dateOfSale: '',
+    });
+    const [salesData, setSalesData] = useState([saleData]);
     const [dateRange, setDateRange] = useState([null, null]);
     const [selectedFilter, setSelectedFilter] = useState("DAY");
 
-    const fetchSalesData = () => {
+    useEffect(() => {
+        const fetchSales = async () => {
+            const requestData = {
+                userId: 1,
+                selectedDateRange: selectedFilter,
+                startDate: dateRange[0] ? dateRange[0].toISOString() : null,
+                endDate: dateRange[1] ? dateRange[1].toISOString() : null
+            };
+            const response = await getSales(requestData);
+            if(response.length > 0) {
+                const updatedSalesData = await Promise.all(
+                    response.map(async (sale) => {
+                        const quantity = await getQuantity(sale.quantityId);
+                        return {
+                            userId: sale.userId,
+                            brandName: sale.brandName,
+                            brandType: sale.brandType,
+                            quantity: quantity,
+                            itemsSold: sale.itemsSold,
+                            mrp: sale.mrp,
+                            dateOfSale: sale.dateOfSale,
+                        };
+                    })
+                );
+                setSalesData(updatedSalesData);
+
+            } else {
+                setSalesData([]);
+            }
+        }
+        fetchSales();
+    }, []);
+
+    const fetchSalesData = async () => {
         const requestData = {
             userId: 1,
             selectedDateRange: selectedFilter,
@@ -16,13 +58,27 @@ const SaleList = ({ userId }) => {
             endDate: dateRange[1] ? dateRange[1].toISOString() : null
         };
 
-        axios.post("http://localhost:8080/api/sale/list", requestData)
-            .then(response => {
-                setSalesData(response.data);
-            })
-            .catch(error => {
-                console.error("Error fetching sales data", error);
-            });
+        const response = await getSales(requestData);
+        console.log("Sales Data", response);
+        if(response.length > 0) {
+            const updatedSalesData = await Promise.all(
+                response.map(async (sale) => {
+                    const quantity = await getQuantity(sale.quantityId);
+                    return {
+                        userId: sale.id,
+                        brandName: sale.brandName,
+                        brandType: sale.brandType,
+                        quantity: quantity,
+                        itemsSold: sale.itemsSold,
+                        mrp: sale.mrp,
+                        dateOfSale: sale.dateOfSale,
+                    };
+                })
+            );
+            setSalesData(updatedSalesData);
+        } else {
+            setSalesData([]);
+        }
     };
 
     const handleDateChange = (dates) => {
@@ -73,7 +129,7 @@ const SaleList = ({ userId }) => {
                     <tr key={sale.id}>
                         <td>{sale.brandType}</td>
                         <td>{sale.brandName}</td>
-                        <td>{sale.liquorQuantity}</td>
+                        <td>{sale.itemsSold}</td>
                         <td>{sale.quantity}</td>
                         <td>{sale.mrp}</td>
                         <td>{new Date(sale.dateOfSale).toLocaleDateString()}</td>

@@ -13,10 +13,22 @@ export const addSale = async (saleData) => {
 };
 
 // Fetch sales data
-export const getSales = async () => {
+export const getSales = async (requestData) => {
     try {
-        const response = await axiosInstance.get("/api/sale/sales");
+        const response = await axiosInstance.post("/api/sale/list", requestData);
+        console.log("Sales Data", response);
         return response.data;
+    } catch (error) {
+        console.error("Error fetching sales", error);
+    }
+};
+
+export const getQuantity = async (quantityId) => {
+    try {
+        const response = await axiosInstance.get(`/api/quantities/getQuantityById/${quantityId}`);
+        let quantity = response.data.quantityName + " - " + response.data.quantity;
+        console.log("Quantity", quantity);
+        return quantity;
     } catch (error) {
         console.error("Error fetching sales", error);
     }

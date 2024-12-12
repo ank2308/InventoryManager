@@ -10,13 +10,13 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const storedUser = sessionStorage.getItem("user");
-        console.log("Stored User from localStorage:", storedUser);
+        console.log("Stored User from sessionStorage:", storedUser);
         if (storedUser) {
             try {
                 const parsedUser = JSON.parse(storedUser);
                 setUser(parsedUser);
             } catch (error) {
-                console.error("Error parsing user from localStorage:", error);
+                console.error("Error parsing user from sessionStorage:", error);
             }
         }
         setLoading(false); // Mark loading as complete

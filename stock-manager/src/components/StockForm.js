@@ -21,14 +21,14 @@ const StockForm = () => {
         userId: "",
         brandName: '',
         brandType: '',
-        lotSize: 0,
         crateInLot: 0,
         itemsInCrate: 0,
         quantityId: '',
         brandQuantityId:'',
         mrp: 0.0,
         marginPrice: 0.0,
-        dateOfMgf: '',
+        warehouseNumber: '',
+        dateEntered: '',
     });
 
 
@@ -100,8 +100,8 @@ const StockForm = () => {
 
     // Validate the form
     useEffect(() => {
-        const { brandType, brandName, lotSize, crateInLot, itemsInCrate, quantityId, mrp, dateOfMgf } = stockData;
-        setIsFormValid(brandType && brandName && lotSize && itemsInCrate && crateInLot && quantityId && mrp && dateOfMgf);
+        const { brandType, brandName,  crateInLot, itemsInCrate, quantityId, mrp, dateEntered } = stockData;
+        setIsFormValid(brandType && brandName && itemsInCrate && crateInLot && quantityId && mrp && dateEntered);
     }, [stockData]);
 
     // Handle form submission
@@ -115,14 +115,14 @@ const StockForm = () => {
             setStockData({
                 brandName: '',
                 brandType: '',
-                lotSize: 0,
                 crateInLot: 0,
                 itemsInCrate: 0,
                 quantityId: '',
                 brandQuantityId:'',
                 mrp: 0.0,
                 marginPrice: 0.0,
-                dateOfMgf: '',
+                warehouseNumber: '',
+                dateEntered: '',
             });
             setSelectedBrandType(null);
             setSelectedBrandName(null);
@@ -199,7 +199,7 @@ const StockForm = () => {
                 </div>
 
                 <div className="form-group mt-3">
-                    <label>Crate in Lots</label>
+                    <label>Number Of Crate</label>
                     <input
                         type="number"
                         className="form-control"
@@ -210,13 +210,13 @@ const StockForm = () => {
                 </div>
 
                 <div className="form-group mt-3">
-                    <label>No of Lots</label>
+                    <label>Warehouse Number</label>
                     <input
-                        type="number"
+                        type="string"
                         className="form-control"
-                        name="lotSize"
-                        value={stockData.lotSize}
-                        onChange={(e) => setStockData({...stockData, lotSize: e.target.value})}
+                        name="warehouseNumber"
+                        value={stockData.warehouseNumber}
+                        onChange={(e) => setStockData({...stockData, warehouseNumber: e.target.value})}
                     />
                 </div>
 
@@ -227,18 +227,19 @@ const StockForm = () => {
                         className="form-control"
                         name="marginPrice"
                         value={stockData.marginPrice}
+                        disabled={true}
                         onChange={(e) => setStockData({...stockData, marginPrice: e.target.value})}
                     />
                 </div>
 
                 <div className="form-group mt-3">
-                    <label>Date of Manufacture</label>
+                    <label>Date of Entry</label>
                     <input
                         type="date"
                         className="form-control"
-                        name="dateOfMgf"
-                        value={stockData.dateOfMgf}
-                        onChange={(e) => setStockData({...stockData, dateOfMgf: e.target.value})}
+                        name="dateEntered"
+                        value={stockData.dateEntered}
+                        onChange={(e) => setStockData({...stockData, dateEntered: e.target.value})}
                     />
                 </div>
 

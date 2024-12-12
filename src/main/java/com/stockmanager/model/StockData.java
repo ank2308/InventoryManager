@@ -29,9 +29,6 @@ public class StockData {
     @Column(name = "Brand_Type", nullable = false)
     private String brandType;
 
-    @Column(name = "Lot_Size", nullable = false)
-    private int lotSize;
-
     @Column(name = "Crate_In_Lot", nullable = false)
     private int crateInLot;
 
@@ -50,8 +47,8 @@ public class StockData {
     @Column(name="Margin_Price", nullable = false)
     private double marginPrice;
 
-    @Column(name="Date_Of_Mgf")
-    private Date dateOfMgf;
+    @Column(name="Warehouse_Number", nullable = false)
+    private String warehouseNumber;
 
     @Column(name="Quantity_Id")
     private Long quantityId;
@@ -60,7 +57,6 @@ public class StockData {
     private Long brandQuantityId;
 
     @Column(name="Date_Entered", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateEntered = new Date();
+    private Date dateEntered;
 }
 

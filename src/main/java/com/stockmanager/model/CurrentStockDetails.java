@@ -14,5 +14,6 @@ public class CurrentStockDetails {
     private int totalItemsLeft;
     private int totalLiquorQuantityLeft;
     private double totalPrice;
+    private String warehouseNumber;
 
 }

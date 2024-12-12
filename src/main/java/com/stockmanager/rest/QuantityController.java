@@ -33,4 +33,9 @@ public class QuantityController {
         return brandDetailsService.getQuantitiesForBrand(brandName);
     }
 
+    @GetMapping("/getQuantityById/{quantityId}")
+    public Quantity getQuantityById(@PathVariable int quantityId) {
+        return quantityService.getQuantityById((long) quantityId);
+    }
+
 }

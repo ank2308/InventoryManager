@@ -1,12 +1,16 @@
 package com.stockmanager.service;
 
+import com.stockmanager.dto.StockRequestDTO;
 import com.stockmanager.model.*;
 import com.stockmanager.repository.QuantityRepository;
 import com.stockmanager.repository.StockDataRepository;
+import com.stockmanager.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,43 +21,56 @@ public class StockDataService {
     private StockDataRepository stockDataRepository;
     @Autowired
     private QuantityRepository quantityRepository;
+    @Autowired
+    private DateUtil dateUtil;
 
     public StockData addStockData(StockData newStockData) {
-        StockData stockData = stockDataRepository.findByUserIdAndBrandQuantityId(newStockData.getUserId(), newStockData.getBrandQuantityId());
         int quantity = quantityRepository.findById(newStockData.getQuantityId()).get().getQuantity();
-        if(stockData != null) {
-            var totalItems = (newStockData.getItemsInCrate() * newStockData.getCrateInLot() * newStockData.getLotSize());
-            var updatedTotalQuantity = (totalItems * quantity) + stockData.getTotalLiquorQuantity();
-            stockData.setCrateInLot(stockData.getCrateInLot() + newStockData.getCrateInLot());
-            stockData.setLotSize(stockData.getLotSize() + newStockData.getLotSize());
-            stockData.setTotalLiquorQuantity(updatedTotalQuantity);
-            stockData.setTotalItems(stockData.getTotalItems() + totalItems);
-        } else {
-            var totalItems = (newStockData.getItemsInCrate() * newStockData.getCrateInLot() * newStockData.getLotSize());
-            var totalQuantity = totalItems * quantity;
-            newStockData.setTotalItems(totalItems);
-            newStockData.setTotalLiquorQuantity(totalQuantity);
-            return stockDataRepository.save(newStockData);
-        }
-        return stockDataRepository.save(stockData);
+        var totalItems = (newStockData.getItemsInCrate() * newStockData.getCrateInLot());
+        var totalQuantity = totalItems * quantity;
+        newStockData.setTotalItems(totalItems);
+        newStockData.setTotalLiquorQuantity(totalQuantity);
+        newStockData.setDateEntered(dateUtil.parseDate(newStockData.getDateEntered()));
+        //To-Do
+        newStockData.setMarginPrice(0);
+        return stockDataRepository.save(newStockData);
     }
 
-    public List<CurrentStockDetails> getAllStockData() {
+    public List<CurrentStockDetails> getAllStockData(StockRequestDTO stockRequestDTO) {
         List<CurrentStockDetails> currentStockDetailsList = new ArrayList<>();
-        List<StockData> stockDataList = stockDataRepository.findAll();
-        for(StockData stockData : stockDataList) {
-            CurrentStockDetails currentStockDetails = new CurrentStockDetails();
-            currentStockDetails.setBrandType(stockData.getBrandType());
-            currentStockDetails.setBrandName(stockData.getBrandName());
-            //GetLiquorQuantity
-            var liquorQuantity = quantityRepository.findById(stockData.getQuantityId()).get();
 
+        DateRangeType dateRangeType = stockRequestDTO.getSelectedDateRange();
 
-            currentStockDetails.setLiquorQuantity(liquorQuantity.getQuantityName() + " - " + liquorQuantity.getQuantity());
-            currentStockDetails.setTotalItemsLeft(stockData.getTotalItems());
-            currentStockDetails.setTotalLiquorQuantityLeft(stockData.getTotalLiquorQuantity());
-            currentStockDetails.setTotalPrice(stockData.getMrp() * stockData.getTotalItems());
-            currentStockDetailsList.add(currentStockDetails);
+        List<StockData> stockDataList = new ArrayList<>();
+        switch (dateRangeType) {
+            case DAY:
+                stockDataList = getStockForToday(stockRequestDTO.getUserId());
+                break;
+            case WEEK:
+                stockDataList = getStockForLastWeek(stockRequestDTO.getUserId());
+                break;
+            case MONTH:
+                stockDataList = getStockForLastMonth(stockRequestDTO.getUserId());
+                break;
+            case CUSTOM:
+                stockDataList = getStockForDateRange(stockRequestDTO.getUserId(), stockRequestDTO.getStartDate(), stockRequestDTO.getEndDate());
+                break;
+        }
+
+        if(!stockDataList.isEmpty()) {
+            for (StockData stockData : stockDataList) {
+                CurrentStockDetails currentStockDetails = new CurrentStockDetails();
+                currentStockDetails.setBrandType(stockData.getBrandType());
+                currentStockDetails.setBrandName(stockData.getBrandName());
+                //GetLiquorQuantity
+                var liquorQuantity = quantityRepository.findById(stockData.getQuantityId()).get();
+                currentStockDetails.setLiquorQuantity(liquorQuantity.getQuantityName() + " - " + liquorQuantity.getQuantity());
+                currentStockDetails.setTotalItemsLeft(stockData.getTotalItems());
+                currentStockDetails.setTotalLiquorQuantityLeft(stockData.getTotalLiquorQuantity());
+                currentStockDetails.setTotalPrice(stockData.getMrp() * stockData.getTotalItems());
+                currentStockDetails.setWarehouseNumber(stockData.getWarehouseNumber());
+                currentStockDetailsList.add(currentStockDetails);
+            }
         }
         return currentStockDetailsList;
     }
@@ -65,6 +82,40 @@ public class StockDataService {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+        // Get sales for today
+        private List<StockData> getStockForToday(Long userId) {
+            Date today = dateUtil.parseDate(new Date());
+            var todaySale = stockDataRepository.findByUserIdAndDateEntered(userId, today);
+            return todaySale;
+        }
+
+        // Get sales for the last week
+        private List<StockData> getStockForLastWeek(Long userId) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, -7);
+            Date lastWeekStart = dateUtil.parseDate(calendar.getTime());
+
+
+            // Fetch sales from last week's start date to today
+            return stockDataRepository.findStockDataInDateRange(userId, lastWeekStart, dateUtil.parseDate(new Date()));
+        }
+
+        // Get sales for the last month
+        private List<StockData> getStockForLastMonth(Long userId) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MONTH, -1);
+            Date lastMonthStart = dateUtil.parseDate(calendar.getTime());
+
+            // Fetch sales from last month's start date to today
+            return stockDataRepository.findStockDataInDateRange(userId, lastMonthStart, dateUtil.parseDate(new Date()));
+        }
+
+        // Get sales for a custom date range
+        private List<StockData> getStockForDateRange(Long userId, Date startDate, Date endDate) {
+            // Fetch sales for the custom date range provided
+            return stockDataRepository.findStockDataInDateRange(userId, dateUtil.parseDate(startDate), dateUtil.parseDate(endDate));
+        }
 
 //    public StockDetails getBrandDetails(String brandName) {
 //        List<StockData> stockDataList = stockDataRepository.findByBrandName(brandName);
@@ -114,16 +165,9 @@ public class StockDataService {
                 currentStock.getBrandName(),
                 currentStock.getQuantityId());
         if (stockData != null) {
-
             if(stockData.getTotalItems() >= currentStock.getTotalItems()) {
                 int updatedTotalItems = stockData.getTotalItems() - currentStock.getTotalItems();
                 stockData.setTotalItems(updatedTotalItems);
-                if(stockData.getTotalItems() > 0) {
-                    int updatedLots = (int) Math.ceil(stockData.getLotSize() / stockData.getTotalItems());
-                    stockData.setLotSize(updatedLots);
-                } else {
-                    stockData.setLotSize(0);
-                }
                 stockDataRepository.save(stockData);
             } else {
                 return false;

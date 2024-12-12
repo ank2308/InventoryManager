@@ -1,6 +1,7 @@
 package com.stockmanager.rest;
 
 import com.stockmanager.dto.BrandStockUserDTO;
+import com.stockmanager.dto.StockRequestDTO;
 import com.stockmanager.model.*;
 import com.stockmanager.service.BrandDetailsService;
 import com.stockmanager.service.DayWiseSaleService;
@@ -37,10 +38,10 @@ public class StockController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/details")
-    public ResponseEntity<List<CurrentStockDetails>> getStockDetails() {
-        List<CurrentStockDetails> currentStockDetailsList = stockDataService.getAllStockData();
-        return ResponseEntity.ok(currentStockDetailsList);
+    @PostMapping("/details")
+    public List<CurrentStockDetails> getStockDetails(@RequestBody StockRequestDTO stockRequestDTO) {
+        List<CurrentStockDetails> currentStockDetailsList = stockDataService.getAllStockData(stockRequestDTO);
+        return currentStockDetailsList;
     }
 
     // API to fetch all unique brand names
