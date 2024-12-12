@@ -1,7 +1,7 @@
 // src/components/StockList.js
 
 import React, { useEffect, useState } from 'react';
-import { getStocks } from '../services/stocksApi';
+import { fetchStockData } from '../services/stocksApi';
 import StockForm from "./StockForm";
 
 const StockList = () => {
@@ -9,7 +9,7 @@ const StockList = () => {
 
     useEffect(() => {
         const fetchStocks = async () => {
-            const data = await getStocks();
+            const data = await fetchStockData();
             setStocks(data);
         };
         fetchStocks();

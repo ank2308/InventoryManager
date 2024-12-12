@@ -3,9 +3,9 @@
 import axiosInstance from "./axiosInstance";
 
 // Fetch stock items
-export const getStocks = async (stockRequestDTO) => {
+export const fetchStockData = async (stockRequestDTO) => {
     try {
-        console.log("Stock Request DTo", stockRequestDTO);
+        console.log("Stock Request DTO", stockRequestDTO);
         const response = await axiosInstance.post(`/api/stocks/details`, stockRequestDTO);
         console.log("Stock Data {}", response);
         return response.data;

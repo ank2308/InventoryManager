@@ -39,7 +39,7 @@ public class DayWiseSaleService {
         dayWiseSale.setMrp(dto.getMrp());
         dayWiseSale.setDateOfSale(dateUtil.parseDate(dto.getDateOfSale()));
 
-        // update stock quantity
+        // update stock sale Data
         StockData updateStockData = new StockData();
         updateStockData.setUserId(dayWiseSale.getUserId());
         updateStockData.setQuantityId(dto.getQuantityId());

@@ -22,6 +22,8 @@ public class StockDataService {
     @Autowired
     private QuantityRepository quantityRepository;
     @Autowired
+    private StockSaleDataService stockSaleDataService;
+    @Autowired
     private DateUtil dateUtil;
 
     public StockData addStockData(StockData newStockData) {
@@ -33,6 +35,22 @@ public class StockDataService {
         newStockData.setDateEntered(dateUtil.parseDate(newStockData.getDateEntered()));
         //To-Do
         newStockData.setMarginPrice(0);
+
+        //fetch stock sale data
+        StockSale stockSale = stockSaleDataService.getStockSaleByUserIdAndBrandQuantityId(newStockData.getUserId(), newStockData.getBrandQuantityId());
+        if(stockSale != null) {
+            stockSale.setTotalItems(stockSale.getTotalItems() + newStockData.getTotalItems());
+            stockSaleDataService.updateStockSale(stockSale);
+        } else {
+            stockSale = new StockSale();
+            stockSale.setBrandName(newStockData.getBrandName());
+            stockSale.setTotalItems(newStockData.getTotalItems());
+            stockSale.setBrandType(newStockData.getBrandType());
+            stockSale.setBrandQuantityId(newStockData.getBrandQuantityId());
+            stockSale.setUserId(newStockData.getUserId());
+            stockSaleDataService.saveStockSale(stockSale);
+        }
+
         return stockDataRepository.save(newStockData);
     }
 
