@@ -22,7 +22,6 @@ public class BrandController {
     @Autowired
     private BrandDetailsService brandDetailsService;
 
-
     // API to save brand details
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/save")
@@ -92,7 +91,7 @@ public class BrandController {
 
     // API to fetch all brand types (distinct)
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/brands/types/{userId}")
+    @GetMapping("/types/{userId}")
     public List<String> getAllBrandTypesByUserId(@PathVariable Long userId ) {
         return brandDetailsService.getAllBrandTypesByUserId(userId);
     }
@@ -109,11 +108,9 @@ public class BrandController {
         return ResponseEntity.ok(suggestions);
     }
 
-    // API to fetch all quantites (distinct)
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/types/{brandType}/{userId}/{brandName}")
-    public  List<Quantity> getAllQuantitiesByUserIdByBrandTypeByBrandName(@PathVariable String brandType, @PathVariable Long userId, @PathVariable String brandName) {
-        return brandDetailsService.getAllQuantitiesByUserIdByBrandTypeByBrandName(userId, brandType, brandName);
+    @GetMapping("/types/{brandType}/{userId}")
+    public  List<String> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
+        return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
     }
 
     @ExceptionHandler(DuplicateBrandNameException.class)

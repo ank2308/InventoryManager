@@ -81,7 +81,9 @@ const StockPage = () => {
     };
 
     return (
-        <div className="container mt-5">
+        <div className="container">
+            <h4>Stock Details</h4>
+
             <div className="mb-3">
                 <button
                     className="btn btn-secondary"
@@ -126,31 +128,28 @@ const StockPage = () => {
                 </div>
             )}
 
-            <div className="mt-4">
-                <h4>Stock Details</h4>
-                <table className="table table-bordered table-striped">
-                    <thead className="thead-dark">
-                    <tr>
-                        <th>Warehouse Number</th>
-                        <th>Brand Name</th>
-                        <th>Brand Type</th>
-                        <th>Total Quantity</th>
-                        <th>Amount</th>
+            <table className="table table-bordered table-striped">
+                <thead className="thead-dark">
+                <tr>
+                    <th>Warehouse Number</th>
+                    <th>Brand Name</th>
+                    <th>Brand Type</th>
+                    <th>Total Quantity</th>
+                    <th>Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                {stocks.map((stock, index) => (
+                    <tr key={index}>
+                        <td>{stock.warehouseNumber}</td>
+                        <td>{stock.brandName}</td>
+                        <td>{stock.brandType}</td>
+                        <td>{stock.totalItemsLeft}</td>
+                        <td>Rs. {stock.totalPrice}</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {stocks.map((stock, index) => (
-                        <tr key={index}>
-                            <td>{stock.warehouseNumber}</td>
-                            <td>{stock.brandName}</td>
-                            <td>{stock.brandType}</td>
-                            <td>{stock.totalItemsLeft}</td>
-                            <td>Rs. {stock.totalPrice}</td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+                ))}
+                </tbody>
+            </table>
         </div>
     );
 };

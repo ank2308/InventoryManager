@@ -113,7 +113,7 @@ const SaleList = ({ userId }) => {
             )}
 
             {/* Sales Table */}
-            <table className="table">
+            <table className="table table-bordered table-striped">
                 <thead>
                 <tr>
                     <th>Brand Type</th>

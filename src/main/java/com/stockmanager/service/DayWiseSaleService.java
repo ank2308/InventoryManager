@@ -27,7 +27,8 @@ public class DayWiseSaleService {
     @Autowired
     private DateUtil dateUtil;
 
-    
+    @Autowired
+    private StockSaleDataService stockSaleDataService;
 
     public Long addDayWiseSale(DayWiseSaleDTO dto) throws Exception {
         DayWiseSale dayWiseSale = new DayWiseSale();
@@ -35,25 +36,21 @@ public class DayWiseSaleService {
         dayWiseSale.setBrandName(dto.getBrandName());
         dayWiseSale.setBrandType(dto.getBrandType());
         dayWiseSale.setItemsSold(dto.getQuantity());
-        dayWiseSale.setQuantityId(dto.getQuantity());
+        dayWiseSale.setQuantityId(dto.getQuantityId());
         dayWiseSale.setMrp(dto.getMrp());
         dayWiseSale.setDateOfSale(dateUtil.parseDate(dto.getDateOfSale()));
 
         // update stock sale Data
-        StockData updateStockData = new StockData();
-        updateStockData.setUserId(dayWiseSale.getUserId());
-        updateStockData.setQuantityId(dto.getQuantityId());
-        updateStockData.setTotalItems(dto.getQuantity());
-        updateStockData.setBrandName(dayWiseSale.getBrandName());
-        updateStockData.setBrandType(dayWiseSale.getBrandType());
-        boolean status = stockDataService.updateStockData(updateStockData);
-        if (!status) {
-            throw new Exception("error while updating exception");
+        StockSale stockSale = stockSaleDataService.getStockSaleByUserIdAndBrandNameAndBrandType(dto.getUserId(), dto.getBrandName(), dto.getBrandType());
+        if(stockSale != null) {
+            stockSale.setTotalItemsLeft(stockSale.getTotalItemsLeft()-dto.getQuantity());
+            stockSale.setItemsSold(stockSale.getItemsSold()+dto.getQuantity());
+            stockSaleDataService.updateStockSale(stockSale);
         }
-
+        if (stockSale == null) {
+            throw new Exception("Cannot update sale data as stock is not present");
+        }
         DayWiseSale res = dayWiseSaleRepository.save(dayWiseSale);
-
-
         return res.getId();
     }
 

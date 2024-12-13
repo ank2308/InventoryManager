@@ -21,8 +21,8 @@ public class StockSale {
     @Column(name = "User_Id", nullable = false)
     private Long userId;
 
-    @Column(name = "Total_Items", nullable = false)
-    private int totalItems;
+    @Column(name = "Total_Items_Left", nullable = false)
+    private int totalItemsLeft;
 
     @Column(name = "Brand_Name", nullable = false)
     private String brandName;

@@ -17,7 +17,7 @@ const StockList = () => {
 
     return (
         <div className="container mt-5">
-            <h2>Stock Management</h2>
+            <h2>Stock Data</h2>
             <StockForm />
             <div className="mt-4">
                 <h4>Stock List</h4>

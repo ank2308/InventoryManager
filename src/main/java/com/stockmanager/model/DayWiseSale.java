@@ -29,7 +29,7 @@ public class DayWiseSale {
     private String brandType;
 
     @Column(name = "Quantity_Id", nullable = false)
-    private int quantityId;
+    private Long quantityId;
 
     @Column(name="Items_Sold", nullable = false)
     private int itemsSold;

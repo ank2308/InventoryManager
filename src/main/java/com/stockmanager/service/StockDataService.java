@@ -1,7 +1,9 @@
 package com.stockmanager.service;
 
+import com.stockmanager.dto.SaleQuantityDTO;
 import com.stockmanager.dto.StockRequestDTO;
 import com.stockmanager.model.*;
+import com.stockmanager.repository.BrandQuantityMappingRepository;
 import com.stockmanager.repository.QuantityRepository;
 import com.stockmanager.repository.StockDataRepository;
 import com.stockmanager.util.DateUtil;
@@ -24,7 +26,11 @@ public class StockDataService {
     @Autowired
     private StockSaleDataService stockSaleDataService;
     @Autowired
+    private QuantityService quantityService;
+    @Autowired
     private DateUtil dateUtil;
+    @Autowired
+    private BrandQuantityMappingRepository brandQuantityMappingRepository;
 
     public StockData addStockData(StockData newStockData) {
         int quantity = quantityRepository.findById(newStockData.getQuantityId()).get().getQuantity();
@@ -39,12 +45,12 @@ public class StockDataService {
         //fetch stock sale data
         StockSale stockSale = stockSaleDataService.getStockSaleByUserIdAndBrandQuantityId(newStockData.getUserId(), newStockData.getBrandQuantityId());
         if(stockSale != null) {
-            stockSale.setTotalItems(stockSale.getTotalItems() + newStockData.getTotalItems());
+            stockSale.setTotalItemsLeft(stockSale.getTotalItemsLeft() + newStockData.getTotalItems());
             stockSaleDataService.updateStockSale(stockSale);
         } else {
             stockSale = new StockSale();
             stockSale.setBrandName(newStockData.getBrandName());
-            stockSale.setTotalItems(newStockData.getTotalItems());
+            stockSale.setTotalItemsLeft(newStockData.getTotalItems());
             stockSale.setBrandType(newStockData.getBrandType());
             stockSale.setBrandQuantityId(newStockData.getBrandQuantityId());
             stockSale.setUserId(newStockData.getUserId());
@@ -101,39 +107,55 @@ public class StockDataService {
                 .collect(Collectors.toList());
     }
 
-        // Get sales for today
-        private List<StockData> getStockForToday(Long userId) {
-            Date today = dateUtil.parseDate(new Date());
-            var todaySale = stockDataRepository.findByUserIdAndDateEntered(userId, today);
-            return todaySale;
+    // Get sales for today
+    private List<StockData> getStockForToday(Long userId) {
+        Date today = dateUtil.parseDate(new Date());
+        var todaySale = stockDataRepository.findByUserIdAndDateEntered(userId, today);
+        return todaySale;
+    }
+
+    // Get sales for the last week
+    private List<StockData> getStockForLastWeek(Long userId) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        Date lastWeekStart = dateUtil.parseDate(calendar.getTime());
+
+
+        // Fetch sales from last week's start date to today
+        return stockDataRepository.findStockDataInDateRange(userId, lastWeekStart, dateUtil.parseDate(new Date()));
+    }
+
+    // Get sales for the last month
+    private List<StockData> getStockForLastMonth(Long userId) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -1);
+        Date lastMonthStart = dateUtil.parseDate(calendar.getTime());
+
+        // Fetch sales from last month's start date to today
+        return stockDataRepository.findStockDataInDateRange(userId, lastMonthStart, dateUtil.parseDate(new Date()));
+    }
+
+    // Get sales for a custom date range
+    private List<StockData> getStockForDateRange(Long userId, Date startDate, Date endDate) {
+        // Fetch sales for the custom date range provided
+        return stockDataRepository.findStockDataInDateRange(userId, dateUtil.parseDate(startDate), dateUtil.parseDate(endDate));
+    }
+
+    public List<SaleQuantityDTO> getAllQuantitiesByUserIdByBrandTypeByBrandName(Long userId, String brandType, String brandName) {
+        List<Long> brandQuantityIdList = stockSaleDataService.findAllBrandQuantityByUserIdAndBrandTypeAndBrandNameAndTotalItemsGreaterThanZero(userId, brandType, brandName);
+        List<SaleQuantityDTO> saleQuantityDTOList = new ArrayList<>();
+        for (Long brandQuantityId : brandQuantityIdList) {
+            BrandQuantityMapping brandQuantityMapping = brandQuantityMappingRepository.findQuantityById(brandQuantityId);
+            SaleQuantityDTO saleQuantityDTO = new SaleQuantityDTO();
+            Quantity quantity = brandQuantityMapping.getQuantity();
+            saleQuantityDTO.setQuantityId(quantity.getId());
+            saleQuantityDTO.setQuantityName(quantity.getQuantityName());
+            saleQuantityDTO.setQuantity(quantity.getQuantity());
+            saleQuantityDTO.setPrice(brandQuantityMapping.getMrp());
+            saleQuantityDTOList.add(saleQuantityDTO);
         }
-
-        // Get sales for the last week
-        private List<StockData> getStockForLastWeek(Long userId) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, -7);
-            Date lastWeekStart = dateUtil.parseDate(calendar.getTime());
-
-
-            // Fetch sales from last week's start date to today
-            return stockDataRepository.findStockDataInDateRange(userId, lastWeekStart, dateUtil.parseDate(new Date()));
-        }
-
-        // Get sales for the last month
-        private List<StockData> getStockForLastMonth(Long userId) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MONTH, -1);
-            Date lastMonthStart = dateUtil.parseDate(calendar.getTime());
-
-            // Fetch sales from last month's start date to today
-            return stockDataRepository.findStockDataInDateRange(userId, lastMonthStart, dateUtil.parseDate(new Date()));
-        }
-
-        // Get sales for a custom date range
-        private List<StockData> getStockForDateRange(Long userId, Date startDate, Date endDate) {
-            // Fetch sales for the custom date range provided
-            return stockDataRepository.findStockDataInDateRange(userId, dateUtil.parseDate(startDate), dateUtil.parseDate(endDate));
-        }
+        return saleQuantityDTOList;
+    }
 
 //    public StockDetails getBrandDetails(String brandName) {
 //        List<StockData> stockDataList = stockDataRepository.findByBrandName(brandName);

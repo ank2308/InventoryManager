@@ -2,6 +2,7 @@ package com.stockmanager.service;
 
 import com.stockmanager.dto.BrandNameWithIdDTO;
 import com.stockmanager.dto.BrandStockUserDTO;
+import com.stockmanager.dto.SaleQuantityDTO;
 import com.stockmanager.exception.DuplicateBrandNameException;
 import com.stockmanager.model.*;
 import com.stockmanager.repository.BrandDetailsRepository;
@@ -23,18 +24,12 @@ public class BrandDetailsService {
 
     @Autowired
     private BrandDetailsRepository brandDetailsRepository;
-
-    @Autowired
-    private StockDataRepository stockDataRepository;
-
     @Autowired
     private BrandQuantityMappingRepository brandQuantityMappingRepository;
-
     @Autowired
     private QuantityRepository quantityRepository;
-
     @Autowired
-    private QuantityService quantityService;
+    private StockSaleDataService stockSaleDataService;
 
     // Fetch all brand details
     public Page<BrandDetails> getAllBrands(int page, int size) {
@@ -106,16 +101,14 @@ public class BrandDetailsService {
     }
 
     public List<String> getAllBrandTypesByUserId(Long userId) {
-        return stockDataRepository.findAvailableBrandTypesByUserId(userId);
+        List<StockSale> stockSales = stockSaleDataService.findAllByUserIdAndTotalItemsGreaterThanZero(userId);
+        List<String> brandTypeList = new ArrayList<>();
+        stockSales.stream().map(StockSale::getBrandType).forEach(brandTypeList::add);
+        return brandTypeList;
     }
 
     public List<String> getAllBrandNamesByUserIdByBrandType(Long userId, String brandType) {
-         return stockDataRepository.findAvailableBrandNamesByUserIdByBrandType(userId, brandType);
-    }
-
-    public List<Quantity> getAllQuantitiesByUserIdByBrandTypeByBrandName(Long userId, String brandType, String brandName) {
-        List<Long> quantityId = stockDataRepository.findAvailableBrandNamesByUserIdByBrandTypeByBrandName(userId, brandType, brandName);
-        return quantityService.getAllQuantitiesById(quantityId);
+         return stockSaleDataService.findAllByUserIdAndBrandTypeAndTotalItemsLessThanZero(userId, brandType);
     }
 
     public List<String> getAllBrandTypes() {

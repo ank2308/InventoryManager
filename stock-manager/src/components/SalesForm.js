@@ -85,10 +85,12 @@ const SalesForm = () => {
 
         try {
             const quantity = await getQuantitiesForAvailableStocks(selectedBrandType.value, user.userId, selectedOption.value); // Fetch brand details
+            console.log("Quantity Data", quantity);
             setLiquorQuantities(
                 quantity.map((quantity) => ({
-                    value: quantity.id,
+                    value: quantity.quantityId,
                     label: `${quantity.quantityName} - ${quantity.quantity} ml`,
+                    mrp: quantity.price,
                 }))
             );
         } catch (error) {
@@ -176,11 +178,13 @@ const SalesForm = () => {
                         value={selectedLiquorQuantity}
                         onChange={(selectedOption) => {
                             setSelectedLiquorQuantity(selectedOption);
-                            console.log("Selected liquor quantity ", selectedOption.value);
+                            console.log("Selected liquor quantity ", selectedOption);
                             setSaleData((prevState) => ({
                                 ...prevState,
                                 quantityId: selectedOption.value,
+                                mrp: selectedOption.mrp,
                             }));
+                            console.log("Sale data after quantity select", saleData);
                         }}
                         placeholder="Select or search Liquor Quantity"
                         isDisabled={!liquorQuantities.length}

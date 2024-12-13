@@ -1,6 +1,7 @@
 package com.stockmanager.rest;
 
 import com.stockmanager.dto.BrandStockUserDTO;
+import com.stockmanager.dto.SaleQuantityDTO;
 import com.stockmanager.dto.StockRequestDTO;
 import com.stockmanager.model.*;
 import com.stockmanager.service.BrandDetailsService;
@@ -21,14 +22,6 @@ public class StockController {
 
     @Autowired
     private StockDataService stockDataService;
-
-    @Autowired
-    private BrandDetailsService brandDetailsService;
-
-    @Autowired
-    private UserDataService userDataService;
-    @Autowired
-    private DayWiseSaleService dayWiseSaleService;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/add")
@@ -51,23 +44,11 @@ public class StockController {
         return ResponseEntity.ok(brandNameList);
     }
 
-//    @GetMapping("/{brandName}")
-//    public StockDetails getBrandDetails(@PathVariable String brandName) {
-//        return stockDataService.getBrandDetails(brandName);
-//    }
-
-    // API to fetch all brand types (distinct)
+    // API to fetch all quantites (distinct)
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/brands/types/{userId}")
-    public List<String> getAllBrandTypesByUserId(@PathVariable Long userId ) {
-        return brandDetailsService.getAllBrandTypesByUserId(userId);
-    }
-
-    // API to fetch all brand types (distinct)
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/brands/types/{brandType}/{userId}")
-    public  List<String> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
-        return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
+    @GetMapping("/types/{brandType}/{userId}/{brandName}")
+    public  List<SaleQuantityDTO> getAllQuantitiesByUserIdByBrandTypeByBrandName(@PathVariable String brandType, @PathVariable Long userId, @PathVariable String brandName) {
+        return stockDataService.getAllQuantitiesByUserIdByBrandTypeByBrandName(userId, brandType, brandName);
     }
 
 

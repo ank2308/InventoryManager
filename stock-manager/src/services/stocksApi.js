@@ -17,7 +17,7 @@ export const fetchStockData = async (stockRequestDTO) => {
 // Fetch brand types for available stocks for usedId
 export const getBrandTypesForAvailableStocks = async (userId) => {
     try {
-        const response = await axiosInstance.get(`/api/stocks/brands/types/${userId}`); // Adjust URL as needed
+        const response = await axiosInstance.get(`/api/brands/types/${userId}`); // Adjust URL as needed
         return response.data; // Assuming the API returns an array of brand types
     } catch (error) {
         console.error('Error fetching brand types:', error);
@@ -28,7 +28,7 @@ export const getBrandTypesForAvailableStocks = async (userId) => {
 // Fetch brand types for available stocks for usedId
 export const getBrandNamesForAvailableStocks = async (userId, brandType) => {
     try{
-        const response = await axiosInstance.get(`/api/stocks/brands/types/${brandType}/${userId}`);
+        const response = await axiosInstance.get(`/api/brands/types/${brandType}/${userId}`);
 
         console.log("Response by axios:", response);
 
@@ -45,7 +45,7 @@ export const getBrandNamesForAvailableStocks = async (userId, brandType) => {
 
 export const getQuantitiesForAvailableStocks = async (brandType, userId, brandName) => {
     try {
-        const response = await axiosInstance.get(`/api/brands/types/${brandType}/${userId}/${brandName}`);
+        const response = await axiosInstance.get(`/api/stocks/types/${brandType}/${userId}/${brandName}`);
         console.log("Quantity", response.data);
 
         return response.data; // Returns the full BrandDetailsWithQuantitiesResponseDTO object

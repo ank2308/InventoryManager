@@ -16,4 +16,6 @@ public interface BrandQuantityMappingRepository extends JpaRepository<BrandQuant
 
     List<BrandQuantityMapping> findByBrandDetails(BrandDetails brandDetails);
     Optional<Object> findByBrandDetailsAndQuantity(BrandDetails brandDetails, Quantity quantity);
+    @Query("SELECT b FROM BrandQuantityMapping b where b.id=:id")
+    BrandQuantityMapping findQuantityById(Long id);
 }
