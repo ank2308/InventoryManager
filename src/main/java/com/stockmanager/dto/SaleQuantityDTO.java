@@ -15,4 +15,5 @@ public class SaleQuantityDTO {
     private int quantity;
     private String quantityName;
     private float price;
+    private Long brandQuantityId;
 }

@@ -18,6 +18,7 @@ const SalesForm = () => {
         quantity: 0,
         mrp: 0.0,
         dateOfSale: '',
+        brandQuantityId: '',
     });
 
     const [brandTypes, setBrandTypes] = useState([]);
@@ -60,6 +61,7 @@ const SalesForm = () => {
             quantity: 0,
             mrp: 0.0,
             dateOfSale: '',
+            brandQuantityId: '',
         }))
         try {
             const response = await getBrandNamesForAvailableStocks(user.userId, selectedOption.value);
@@ -81,6 +83,7 @@ const SalesForm = () => {
             quantity: 0,
             mrp: 0.0,
             dateOfSale: '',
+            brandQuantityId: '',
         }));
 
         try {
@@ -91,6 +94,7 @@ const SalesForm = () => {
                     value: quantity.quantityId,
                     label: `${quantity.quantityName} - ${quantity.quantity} ml`,
                     mrp: quantity.price,
+                    brandQuantityId: quantity.brandQuantityId,
                 }))
             );
         } catch (error) {
@@ -126,6 +130,7 @@ const SalesForm = () => {
                 quantity: 0,
                 mrp: 0.0,
                 dateOfSale: '',
+                brandQuantityId: '',
             });
         } catch (error) {
             console.error('Error adding sale:', error);
@@ -183,6 +188,7 @@ const SalesForm = () => {
                                 ...prevState,
                                 quantityId: selectedOption.value,
                                 mrp: selectedOption.mrp,
+                                brandQuantityId: selectedOption.brandQuantityId,
                             }));
                             console.log("Sale data after quantity select", saleData);
                         }}

@@ -41,7 +41,7 @@ public class DayWiseSaleService {
         dayWiseSale.setDateOfSale(dateUtil.parseDate(dto.getDateOfSale()));
 
         // update stock sale Data
-        StockSale stockSale = stockSaleDataService.getStockSaleByUserIdAndBrandNameAndBrandType(dto.getUserId(), dto.getBrandName(), dto.getBrandType());
+        StockSale stockSale = stockSaleDataService.getStockSaleByUserIdAndBrandQuantityId(dto.getUserId(), dto.getBrandQuantityId());
         if(stockSale != null) {
             stockSale.setTotalItemsLeft(stockSale.getTotalItemsLeft()-dto.getQuantity());
             stockSale.setItemsSold(stockSale.getItemsSold()+dto.getQuantity());

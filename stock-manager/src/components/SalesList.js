@@ -118,8 +118,8 @@ const SaleList = ({ userId }) => {
                 <tr>
                     <th>Brand Type</th>
                     <th>Brand Name</th>
-                    <th>Liquor Quantity</th>
-                    <th>Quantity</th>
+                    <th>Liquor Quantity Sold</th>
+                    <th>Quantity Size</th>
                     <th>MRP</th>
                     <th>Date of Sale</th>
                 </tr>

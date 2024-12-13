@@ -152,6 +152,7 @@ public class StockDataService {
             saleQuantityDTO.setQuantityName(quantity.getQuantityName());
             saleQuantityDTO.setQuantity(quantity.getQuantity());
             saleQuantityDTO.setPrice(brandQuantityMapping.getMrp());
+            saleQuantityDTO.setBrandQuantityId(brandQuantityId);
             saleQuantityDTOList.add(saleQuantityDTO);
         }
         return saleQuantityDTOList;

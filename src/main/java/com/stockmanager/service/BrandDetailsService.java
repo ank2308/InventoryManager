@@ -103,7 +103,7 @@ public class BrandDetailsService {
     public List<String> getAllBrandTypesByUserId(Long userId) {
         List<StockSale> stockSales = stockSaleDataService.findAllByUserIdAndTotalItemsGreaterThanZero(userId);
         List<String> brandTypeList = new ArrayList<>();
-        stockSales.stream().map(StockSale::getBrandType).forEach(brandTypeList::add);
+        stockSales.stream().map(StockSale::getBrandType).distinct().forEach(brandTypeList::add);
         return brandTypeList;
     }
 

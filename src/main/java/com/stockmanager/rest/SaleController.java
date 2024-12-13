@@ -21,7 +21,6 @@ public class SaleController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/day-wise")
     public ResponseEntity<Long> addDayWiseSale(@RequestBody DayWiseSaleDTO dayWiseSaleDTO) throws Exception {
-        System.out.println(dayWiseSaleDTO);
         Long savedId = dayWiseSaleService.addDayWiseSale(dayWiseSaleDTO);
         return ResponseEntity.ok(savedId);
     }

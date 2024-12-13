@@ -22,4 +22,5 @@ public class DayWiseSaleDTO {
     private double mrp;
 
     private Date dateOfSale;
+    private Long brandQuantityId;
 }
