@@ -2,11 +2,13 @@ package com.stockmanager.rest;
 
 import com.stockmanager.dto.BrandStockUserDTO;
 import com.stockmanager.dto.SaleQuantityDTO;
+import com.stockmanager.dto.SalesRequestDTO;
 import com.stockmanager.dto.StockRequestDTO;
 import com.stockmanager.model.*;
 import com.stockmanager.service.BrandDetailsService;
 import com.stockmanager.service.DayWiseSaleService;
 import com.stockmanager.service.StockDataService;
+import com.stockmanager.service.StockSaleDataService;
 import com.stockmanager.service.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,9 @@ public class StockController {
 
     @Autowired
     private StockDataService stockDataService;
+
+    @Autowired
+    private StockSaleDataService saleDataService;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/add")
@@ -49,6 +54,13 @@ public class StockController {
     @GetMapping("/types/{brandType}/{userId}/{brandName}")
     public  List<SaleQuantityDTO> getAllQuantitiesByUserIdByBrandTypeByBrandName(@PathVariable String brandType, @PathVariable Long userId, @PathVariable String brandName) {
         return stockDataService.getAllQuantitiesByUserIdByBrandTypeByBrandName(userId, brandType, brandName);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/available-stocks/{userId}")
+    public List<CurrentStockDetails> getAvailableStockDetails(@PathVariable Long userId) {
+        List<CurrentStockDetails> currenStockDetails = saleDataService.findAvailabStock(userId);
+        return currenStockDetails;
     }
 
 

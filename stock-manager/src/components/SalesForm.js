@@ -31,6 +31,7 @@ const SalesForm = () => {
     const [selectedLiquorQuantity, setSelectedLiquorQuantity] = useState(null);
     const [isFormValid, setIsFormValid] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [dateError, setDateError] = useState('');
 
     const user = JSON.parse(sessionStorage.getItem('user')); // Parse user from session storage
 
@@ -47,6 +48,11 @@ const SalesForm = () => {
         };
         fetchBrandTypes();
     }, [user.userId]);
+
+    const validateDateOfSale = (dateOfSale) => {
+        const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+        return dateOfSale <= today;
+    };
 
     const handleBrandTypeChange = async (selectedOption) => {
         setSelectedBrandName(null);
@@ -88,7 +94,6 @@ const SalesForm = () => {
 
         try {
             const quantity = await getQuantitiesForAvailableStocks(selectedBrandType.value, user.userId, selectedOption.value); // Fetch brand details
-            console.log("Quantity Data", quantity);
             setLiquorQuantities(
                 quantity.map((quantity) => ({
                     value: quantity.quantityId,
@@ -105,11 +110,18 @@ const SalesForm = () => {
     useEffect(() => {
         const { brandType, brandName, quantityId, quantity, mrp, dateOfSale } = saleData;
         setIsFormValid(brandType && brandName && quantityId && quantity > 0 && mrp > 0 && dateOfSale);
-        console.log("Sale Data", saleData);
     }, [saleData]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+
+        if (name === "dateOfSale" && !validateDateOfSale(value)) {
+            setDateError("Date of sale cannot be greater than today's date.");
+            return;
+        } else {
+            setDateError('');
+        }
+
         setSaleData((prevState) => ({
             ...prevState,
             [name]: value,
@@ -237,6 +249,7 @@ const SalesForm = () => {
                         onChange={handleInputChange}
                         required
                     />
+                    {dateError && <p style={{ color: 'red' }}>{dateError}</p>} {/* Display error if any */}
                 </div>
 
                 <button type="submit" className="btn btn-primary mt-3" disabled={!isFormValid}>

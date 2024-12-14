@@ -18,6 +18,7 @@ import {useContext} from "react";
 import BrandsList from "./components/BrandsList";
 import ManageUsersPage from "./components/ManageUsersPage";
 import AddApplicationUserPage from "./pages/AddAplicationUserPage";
+import CurrentStockList from "./components/CurrentStockList";
 
 const App = () => {
 
@@ -75,6 +76,14 @@ const AppContent = () => {
                     element={
                         <PrivateRoute allowedRoles={["ROLE_USER", "ROLE_ADMIN"]}>
                             <StockPage />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/current-stock"
+                    element={
+                        <PrivateRoute allowedRoles={["ROLE_USER", "ROLE_ADMIN"]}>
+                            <CurrentStockList />
                         </PrivateRoute>
                     }
                 />

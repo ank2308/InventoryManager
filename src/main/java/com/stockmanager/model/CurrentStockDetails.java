@@ -11,9 +11,11 @@ public class CurrentStockDetails {
     private String brandName;
     private String brandType;
     private String liquorQuantity;
+    private int liquorSize;
     private int totalItemsLeft;
     private int totalLiquorQuantityLeft;
     private double totalPrice;
     private String warehouseNumber;
+    private float mrp;
 
 }

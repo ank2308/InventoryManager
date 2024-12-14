@@ -29,4 +29,15 @@ public class BrandDetailsWithQuantitiesResponseDTO {
         private int quantity;        // e.g., 750 ml
         private float mrp;           // e.g., 1500.00
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class QuantityNameWithMrpDTO {
+        private String quantityName; // e.g., Glass Bottle
+        private int quantity;
+        private float mrp;           // e.g., 1500.00
+    }
+
 }

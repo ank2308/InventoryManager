@@ -40,6 +40,12 @@ const Navbar = () => {
                                         Stock Management
                                     </Link>
                                 </li>
+                                {/* Common options for all users */}
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/current-stock">
+                                        Current Stock Details
+                                    </Link>
+                                </li>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/sales">
                                         Sales Management
