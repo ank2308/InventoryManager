@@ -14,6 +14,18 @@ export const fetchStockData = async (stockRequestDTO) => {
     }
 };
 
+// Fetch current stock items
+export const fetchCurrentStockData = async (userId) => {
+    try {
+        const response = await axiosInstance.get(`/api/stocks/available-stocks/${userId}`);
+        console.log("Stock Data {}", response);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching stocks", error);
+    }
+};
+
+
 // Fetch brand types for available stocks for usedId
 export const getBrandTypesForAvailableStocks = async (userId) => {
     try {
