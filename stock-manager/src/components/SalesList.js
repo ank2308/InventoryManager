@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import {getQuantity, getSales} from "../services/saleApi";
 
 const SaleList = ({ userId }) => {
+    const [user, setUser] = useState({});
     const [saleData, setSaleData] = useState({
         userId: '',
         brandName: '',
@@ -18,9 +19,14 @@ const SaleList = ({ userId }) => {
     const [selectedFilter, setSelectedFilter] = useState("DAY");
 
     useEffect(() => {
+        const storedUser = JSON.parse(sessionStorage.getItem('user'));
+        setUser(storedUser);
+    }, []);
+
+    useEffect(() => {
         const fetchSales = async () => {
             const requestData = {
-                userId: 1,
+                userId: user.userId,
                 selectedDateRange: selectedFilter,
                 startDate: dateRange[0] ? dateRange[0].toISOString() : null,
                 endDate: dateRange[1] ? dateRange[1].toISOString() : null
@@ -52,7 +58,7 @@ const SaleList = ({ userId }) => {
 
     const fetchSalesData = async () => {
         const requestData = {
-            userId: 1,
+            userId: user.userId,
             selectedDateRange: selectedFilter,
             startDate: dateRange[0] ? dateRange[0].toISOString() : null,
             endDate: dateRange[1] ? dateRange[1].toISOString() : null

@@ -72,8 +72,10 @@ public class AuthController {
             String token = jwtUtils.generateToken(appUser.getUsername(), roles);
             String refreshToken = jwtUtils.generateRefreshToken(appUser.getUsername());
 
+            User user = userDataRepository.findByUsername(appUser.getUsername());
+
             if(!roles.contains("ROLE_ADMIN")) {
-                User user = userDataRepository.findByUsername(appUser.getUsername());
+
                 return ResponseEntity.ok(Map.of(
                         "token", token,
                         "refreshToken", refreshToken,
