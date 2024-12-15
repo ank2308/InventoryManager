@@ -22,9 +22,6 @@ public class DayWiseSaleService {
     private DayWiseSaleRepository dayWiseSaleRepository;
 
     @Autowired
-    private StockDataService stockDataService;
-
-    @Autowired
     private DateUtil dateUtil;
 
     @Autowired
@@ -33,6 +30,7 @@ public class DayWiseSaleService {
     public Long addDayWiseSale(DayWiseSaleDTO dto) throws Exception {
         DayWiseSale dayWiseSale = new DayWiseSale();
         dayWiseSale.setUserId(dto.getUserId());
+        dayWiseSale.setShopId(dto.getShopId());
         dayWiseSale.setBrandName(dto.getBrandName());
         dayWiseSale.setBrandType(dto.getBrandType());
         dayWiseSale.setItemsSold(dto.getQuantity());
@@ -41,7 +39,7 @@ public class DayWiseSaleService {
         dayWiseSale.setDateOfSale(dateUtil.parseDate(dto.getDateOfSale()));
 
         // update stock sale Data
-        StockSale stockSale = stockSaleDataService.getStockSaleByUserIdAndBrandQuantityId(dto.getUserId(), dto.getBrandQuantityId());
+        StockSale stockSale = stockSaleDataService.getStockSaleByShopIdAndBrandQuantityId(dto.getShopId(), dto.getBrandQuantityId());
         if(stockSale != null) {
             stockSale.setTotalItemsLeft(stockSale.getTotalItemsLeft()-dto.getQuantity());
             stockSale.setItemsSold(stockSale.getItemsSold()+dto.getQuantity());
@@ -60,22 +58,22 @@ public class DayWiseSaleService {
 
         switch (dateRangeType) {
             case DAY:
-                return getSalesForToday(requestDTO.getUserId());
+                return getSalesForToday(requestDTO.getShopId());
             case WEEK:
-                return getSalesForLastWeek(requestDTO.getUserId());
+                return getSalesForLastWeek(requestDTO.getShopId());
             case MONTH:
-                return getSalesForLastMonth(requestDTO.getUserId());
+                return getSalesForLastMonth(requestDTO.getShopId());
             case CUSTOM:
-                return getSalesForDateRange(requestDTO.getUserId(), requestDTO.getStartDate(), requestDTO.getEndDate());
+                return getSalesForDateRange(requestDTO.getShopId(), requestDTO.getStartDate(), requestDTO.getEndDate());
             default:
                 throw new IllegalArgumentException("Invalid date range");
         }
     }
 
     // Get sales for today
-    private List<DayWiseSale> getSalesForToday(Long userId) {
+    private List<DayWiseSale> getSalesForToday(Long shopId) {
         Date today = dateUtil.parseDate(new Date());
-        var todaySale = dayWiseSaleRepository.findByUserIdAndDateOfSale(userId, today);
+        var todaySale = dayWiseSaleRepository.findByShopIdAndDateOfSale(shopId, today);
         return todaySale;
     }
 
@@ -107,7 +105,7 @@ public class DayWiseSaleService {
     }
 
     private int TotalQuantityUser(Long userId) {
-        List<DayWiseSale> dayWiseSales = dayWiseSaleRepository.findByUserId(userId);
+        List<DayWiseSale> dayWiseSales = dayWiseSaleRepository.findByShopId(userId);
         var totalQuantity = 0;
         //Get Total Quantity from dayWiseSales
         for(DayWiseSale dayWiseSale : dayWiseSales) {

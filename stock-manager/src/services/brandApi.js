@@ -4,7 +4,6 @@ import axiosInstance from "./axiosInstance";
 export const getBrandTypes = async () => {
     try {
         const response = await axiosInstance.get("/api/brands/types");
-        console.log(response)
         return response;
     } catch (error) {
         console.error("Error fetching stocks", error);
@@ -15,7 +14,6 @@ export const getBrandTypes = async () => {
 export const getBrandNamesByType = async (brandType) => {
     try {
         const response = await axiosInstance.get(`/api/brands/by-type/${brandType}`);
-        console.log("Response by axios:", response);
 
         // Map response data into dropdown-compatible options
         return response.data.map((brand) => ({
@@ -32,8 +30,6 @@ export const getBrandNamesByType = async (brandType) => {
 export const getBrandDetailsById = async (brandId) => {
     try {
         const response = await axiosInstance.get(`/api/brands/${brandId}`);
-        console.log("Brand Details Response:", response.data);
-
         return response.data; // Returns the full BrandDetailsWithQuantitiesResponseDTO object
     } catch (error) {
         console.error("Error fetching brand details:", error);

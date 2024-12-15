@@ -1,8 +1,10 @@
 package com.stockmanager.service;
 
 import com.stockmanager.model.Address;
+import com.stockmanager.model.Shop;
 import com.stockmanager.model.User;
 import com.stockmanager.repository.AddressDataRepository;
+import com.stockmanager.repository.ShopDataRepository;
 import com.stockmanager.repository.UserDataRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,9 @@ public class UserDataService {
     @Autowired
     private AddressDataRepository addressDataRepository;
 
+    @Autowired
+    private ShopDataRepository shopDataRepository;
+
     // Add a new user with addresses
     @Transactional
     public User addUserData(User savedUser) {
@@ -40,26 +45,28 @@ public class UserDataService {
             user.setUsername(savedUser.getUsername());
             user.setName(savedUser.getName());
             user.setEmail(savedUser.getEmail());
-            user.setLicenseNo(savedUser.getLicenseNo());
-            user.setLicenseExpiry(savedUser.getLicenseExpiry());
             user.setPhoneNo(savedUser.getPhoneNo());
-            user.setAddresses(new ArrayList<>()); // Initialize addresses list
+            user.setShops(new ArrayList<>()); // Initialize addresses list
             userDataRepository.save(user);
 
             // Save addresses and link to user
-            List<Address> addressesToSave = new ArrayList<>();
-            for (Address address : savedUser.getAddresses()) {
-                Address newAddress = new Address();
-                newAddress.setCity(address.getCity());
-                newAddress.setState(address.getState());
-                newAddress.setArea(address.getArea());
-                newAddress.setPincode(address.getPincode());
-                newAddress.setShopNo(address.getShopNo());
-                newAddress.setUser(user); // Set bi-directional mapping
-                addressesToSave.add(newAddress);
-                user.getAddresses().add(newAddress);
+            List<Shop> shopsToSave = new ArrayList<>();
+            for (Shop shop : savedUser.getShops()) {
+                Shop newShop = new Shop();
+                newShop.setShopNo(shop.getShopNo());
+                newShop.setShopName(shop.getShopName());
+                newShop.setLicenseNo(shop.getLicenseNo());
+                newShop.setLicenseExpiry(shop.getLicenseExpiry());
+                newShop.setShopPhoneNumber(shop.getShopPhoneNumber());
+                newShop.setCity(shop.getCity());
+                newShop.setState(shop.getState());
+                newShop.setArea(shop.getArea());
+                newShop.setPincode(shop.getPincode());
+                newShop.setUser(user); // Set bi-directional mapping
+                shopsToSave.add(newShop);
+                user.getShops().add(newShop);
             }
-            addressDataRepository.saveAll(addressesToSave);
+            shopDataRepository.saveAll(shopsToSave);
             userDataRepository.save(user);
 
             return user;
@@ -79,8 +86,8 @@ public class UserDataService {
     }
 
     // Fetch user by ID with addresses
-    public User getUserWithAddresses(Long id) {
-        return userDataRepository.findByIdWithAddresses(id)
+    public User getUserWithShops(Long id) {
+        return userDataRepository.findByIdWithShops(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
@@ -92,41 +99,43 @@ public class UserDataService {
 
         // Update user fields
         existingUser.setName(updatedUser.getName());
-        existingUser.setLicenseNo(updatedUser.getLicenseNo());
-        existingUser.setLicenseExpiry(updatedUser.getLicenseExpiry());
         existingUser.setPhoneNo(updatedUser.getPhoneNo());
         existingUser.setEmail(updatedUser.getEmail());
-
-        // Update addresses
-        List<Address> updatedAddresses = updatedUser.getAddresses();
-        List<Address> existingAddresses = existingUser.getAddresses();
+        
+        // Update shop details
+        List<Shop> updatedShops = updatedUser.getShops();
+        List<Shop> existingShops = existingUser.getShops();
 
         // Remove addresses not in the updated list
-        existingAddresses.removeIf(existingAddress ->
-                updatedAddresses.stream()
-                        .noneMatch(updatedAddress -> updatedAddress.getId().equals(existingAddress.getId()))
+        existingShops.removeIf(existingShop ->
+                updatedShops.stream()
+                        .noneMatch(updatedShop -> updatedShop.getId().equals(existingShop.getId()))
         );
 
-        // Add or update addresses
-        for (Address updatedAddress : updatedAddresses) {
-            Address address = existingAddresses.stream()
-                    .filter(existingAddress -> existingAddress.getId().equals(updatedAddress.getId()))
+        // Add or update shop
+        for (Shop updatedShop : updatedShops) {
+            Shop shop = existingShops.stream()
+                    .filter(existingAddress -> existingAddress.getId().equals(updatedShop.getId()))
                     .findFirst()
-                    .orElse(new Address());
+                    .orElse(new Shop());
 
-            address.setShopNo(updatedAddress.getShopNo());
-            address.setArea(updatedAddress.getArea());
-            address.setCity(updatedAddress.getCity());
-            address.setState(updatedAddress.getState());
-            address.setPincode(updatedAddress.getPincode());
-            address.setUser(existingUser);
+            shop.setShopName(updatedShop.getShopName());
+            shop.setShopNo(updatedShop.getShopNo());
+            shop.setLicenseNo(updatedShop.getLicenseNo());
+            shop.setLicenseExpiry(updatedShop.getLicenseExpiry());
+            shop.setShopPhoneNumber(updatedShop.getShopPhoneNumber());
+            shop.setArea(updatedShop.getArea());
+            shop.setCity(updatedShop.getCity());
+            shop.setState(updatedShop.getState());
+            shop.setPincode(updatedShop.getPincode());
+            shop.setUser(existingUser);
 
-            if (address.getId() == null) {
-                existingAddresses.add(address);
+            if (shop.getId() == null) {
+                existingShops.add(shop);
             }
         }
 
-        existingUser.setAddresses(existingAddresses);
+        existingUser.setShops(existingShops);
         return userDataRepository.save(existingUser);
     }
 
@@ -136,9 +145,9 @@ public class UserDataService {
         User user = userDataRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Delete associated addresses
-        List<Address> addresses = user.getAddresses();
-        addressDataRepository.deleteAll(addresses);
+        // Delete associated shops
+        List<Shop> shops = user.getShops();
+        shopDataRepository.deleteAll(shops);
 
         // Delete the user
         userDataRepository.delete(user);
@@ -152,16 +161,11 @@ public class UserDataService {
         if (user.getName() == null || user.getName().isBlank()) {
             throw new IllegalArgumentException("Name cannot be empty.");
         }
-        if (user.getLicenseNo() == null || user.getLicenseNo().isBlank()) {
-            throw new IllegalArgumentException("License number cannot be empty.");
-        }
-        if (user.getLicenseExpiry() == null) {
-            throw new IllegalArgumentException("License expiry date cannot be null.");
-        }
-        if (user.getAddresses() == null || user.getAddresses().isEmpty()) {
+        if (user.getShops() == null || user.getShops().isEmpty()) {
             throw new IllegalArgumentException("At least one address is required.");
         }
     }
+    // TODO: add code to validate shop details
 
     public List<User> getUsersWithoutAppUser() {
         return userDataRepository.findUsersWithoutAppUser();

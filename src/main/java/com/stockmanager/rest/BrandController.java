@@ -91,9 +91,9 @@ public class BrandController {
 
     // API to fetch all brand types (distinct)
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/types/{userId}")
-    public List<String> getAllBrandTypesByUserId(@PathVariable Long userId ) {
-        return brandDetailsService.getAllBrandTypesByUserId(userId);
+    @GetMapping("/types/{shopId}")
+    public List<String> getAllBrandTypesByUserId(@PathVariable Long shopId ) {
+        return brandDetailsService.getAllBrandTypesByShopId(shopId);
     }
 
     @GetMapping("search")
@@ -108,9 +108,9 @@ public class BrandController {
         return ResponseEntity.ok(suggestions);
     }
 
-    @GetMapping("/types/{brandType}/{userId}")
-    public  List<String> getAllBrandNamesByUserIdByBrandType(@PathVariable Long userId, @PathVariable String brandType ) {
-        return brandDetailsService.getAllBrandNamesByUserIdByBrandType(userId, brandType);
+    @GetMapping("/types/{brandType}/{shopId}")
+    public  List<String> getAllBrandNamesByShopIdByBrandType(@PathVariable Long shopId, @PathVariable String brandType ) {
+        return brandDetailsService.getAllBrandNamesByShopIdByBrandType(shopId, brandType);
     }
 
     @ExceptionHandler(DuplicateBrandNameException.class)

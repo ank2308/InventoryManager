@@ -7,10 +7,16 @@ import {
 } from '../services/stocksApi';
 import { addSale } from '../services/saleApi';
 import {getBrandDetailsById} from "../services/brandApi";
+import { fetchShopsByUserId } from '../services/shopsApi';
 
 const SalesForm = () => {
+    const [shops, setShops] = useState({});
+    const [selectedShop, setSelectedShop] = useState(null); 
+    const [user, setUser] = useState({});
+
     const [saleData, setSaleData] = useState({
         id: '',
+        shopId: '',
         userId: '',
         brandType: '',
         brandName: '',
@@ -33,12 +39,50 @@ const SalesForm = () => {
     const [loading, setLoading] = useState(true);
     const [dateError, setDateError] = useState('');
 
-    const user = JSON.parse(sessionStorage.getItem('user')); // Parse user from session storage
+    const validateDateOfSale = (dateOfSale) => {
+        const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+        return dateOfSale <= today;
+    };
 
+    // fetch user from local storage
+    useEffect(() => {
+        const storedUser = JSON.parse(sessionStorage.getItem('user'));
+        setUser(storedUser);
+    }, []);
+
+    // fetch shops by userId
+    useEffect(() => {
+        const fetchShops = async (userId) => {
+            try {
+                const response = await fetchShopsByUserId(userId);
+                const shopOptions = response.map((shop) => ({
+                    value: shop.id,
+                    label: `${shop.shopName}`,
+                    licenseNo: shop.licenseNo,
+                }), {});
+                setShops(shopOptions);
+                // Set the default selected shop to the first shop
+                if (shopOptions.length > 0) {
+                    setSelectedShop(shopOptions[0]);
+                    setSaleData((prevState) => ({
+                        ...prevState,
+                        shopId: shopOptions[0]?.value,
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching shops by userId:', error);
+            }
+        }
+        if(user && user.userId) {
+            fetchShops(user.userId)
+        }
+    }, [user])
+
+    // fetch brand types by selected shop
     useEffect(() => {
         const fetchBrandTypes = async () => {
             try {
-                const data = await getBrandTypesForAvailableStocks(user.userId);
+                const data = await getBrandTypesForAvailableStocks(selectedShop?.value);
                 setBrandTypes(data.map((type) => ({ value: type, label: type }))); // Format for react-select
                 setLoading(false);
             } catch (error) {
@@ -46,12 +90,23 @@ const SalesForm = () => {
                 setLoading(false);
             }
         };
-        fetchBrandTypes();
-    }, [user.userId]);
+        if (selectedShop && selectedShop?.value) {
+            fetchBrandTypes();
+        }
+    }, [selectedShop]);
 
-    const validateDateOfSale = (dateOfSale) => {
-        const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-        return dateOfSale <= today;
+
+    useEffect(() => {
+        const { brandType, brandName, quantityId, quantity, mrp, dateOfSale } = saleData;
+        setIsFormValid(brandType && brandName && quantityId && quantity > 0 && mrp > 0 && dateOfSale);
+    }, [saleData]);
+
+    const handleShopChange = (selectedOption) => {
+        setSelectedShop(selectedOption);
+        setSaleData((prevState) => ({
+            ...prevState,
+            shopId: selectedOption.value,
+        }));
     };
 
     const handleBrandTypeChange = async (selectedOption) => {
@@ -70,7 +125,7 @@ const SalesForm = () => {
             brandQuantityId: '',
         }))
         try {
-            const response = await getBrandNamesForAvailableStocks(user.userId, selectedOption.value);
+            const response = await getBrandNamesForAvailableStocks(selectedShop.value, selectedOption.value);
             setBrandNames(response); // Format for react-select
         } catch (error) {
             console.error('Error fetching brand names:', error);
@@ -93,7 +148,7 @@ const SalesForm = () => {
         }));
 
         try {
-            const quantity = await getQuantitiesForAvailableStocks(selectedBrandType.value, user.userId, selectedOption.value); // Fetch brand details
+            const quantity = await getQuantitiesForAvailableStocks(selectedBrandType.value, selectedShop.value, selectedOption.value); // Fetch brand details
             setLiquorQuantities(
                 quantity.map((quantity) => ({
                     value: quantity.quantityId,
@@ -106,11 +161,6 @@ const SalesForm = () => {
             console.error("Error fetching brand details:", error);
         }
     };
-
-    useEffect(() => {
-        const { brandType, brandName, quantityId, quantity, mrp, dateOfSale } = saleData;
-        setIsFormValid(brandType && brandName && quantityId && quantity > 0 && mrp > 0 && dateOfSale);
-    }, [saleData]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -133,27 +183,63 @@ const SalesForm = () => {
         try {
             await addSale({ ...saleData, userId: user.userId });
             alert('Sale added successfully!');
-            setSaleData({
-                id: '',
-                userId: '',
-                brandType: '',
-                brandName: '',
-                quantityId: '',
-                quantity: 0,
-                mrp: 0.0,
-                dateOfSale: '',
-                brandQuantityId: '',
-            });
+            resetForm();
+            
         } catch (error) {
             console.error('Error adding sale:', error);
             alert('Failed to add sale!');
         }
     };
+    
+    const resetForm = () => {
+        setSelectedLiquorQuantity(null);
+        setLiquorQuantities([]);
+        setBrandNames([]);
+        setSelectedBrandName(null);
+        setBrandTypes([]);
+        setSelectedBrandType(null)
+        setSaleData({
+            id: '',
+            userId: '',
+            shopId: '',
+            brandType: '',
+            brandName: '',
+            quantityId: '',
+            quantity: 0,
+            mrp: 0.0,
+            dateOfSale: '',
+            brandQuantityId: '',
+        });
+    }
 
     return (
         <div className="container mt-5">
             <h2>Sales Form</h2>
             <form onSubmit={handleSubmit}>
+
+                                {/* Shop Dropdown */}
+                                <div className="form-group">
+                    <label>Select Shop</label>
+                    <Select
+                        options={shops}
+                        value={selectedShop}
+                        onChange={handleShopChange}
+                        placeholder="Select Shop"
+                    />
+                </div>
+
+                {/* Display selected shop details */}
+                {selectedShop && (
+                    <div className="form-group mt-2">
+                        <label>Shop Details:</label>
+                        <p>
+                            <strong>Shop Name:</strong> {selectedShop.label.split(' (')[0]} <br />
+                            <strong>License No:</strong> {selectedShop.licenseNo} <br />
+                            <strong>License Expiry:</strong> {selectedShop.licenseExpiry}
+                        </p>
+                    </div>
+                )}
+
                 {/* Brand Type */}
                 <div className="form-group">
                     <label htmlFor="brandType">Brand Type</label>
@@ -202,7 +288,6 @@ const SalesForm = () => {
                                 mrp: selectedOption.mrp,
                                 brandQuantityId: selectedOption.brandQuantityId,
                             }));
-                            console.log("Sale data after quantity select", saleData);
                         }}
                         placeholder="Select or search Liquor Quantity"
                         isDisabled={!liquorQuantities.length}

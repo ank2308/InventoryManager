@@ -22,6 +22,9 @@ public class DayWiseSale {
     @Column(name = "User_Id", nullable = false)
     private Long userId;
 
+    @Column(name = "Shop_Id", nullable = false)
+    private Long shopId;
+
     @Column(name = "Brand_Name", nullable = false)
     private String brandName;
 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../services/axiosInstance";
 import AuthContext from "../context/AuthContext";
 
-const AddUserss = () => {
+const AddUsers = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [licenseNo, setLicenseNo] = useState("");
@@ -121,4 +121,4 @@ const AddUserss = () => {
     );
 };
 
-export default AddUserss;
+export default AddUsers;

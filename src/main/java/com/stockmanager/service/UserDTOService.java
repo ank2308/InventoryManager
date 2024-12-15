@@ -1,6 +1,7 @@
 package com.stockmanager.service;
 
 import com.stockmanager.dto.AddressDTO;
+import com.stockmanager.dto.ShopDTO;
 import com.stockmanager.dto.UserDTO;
 import com.stockmanager.model.User;
 import org.springframework.stereotype.Service;
@@ -16,23 +17,25 @@ public class UserDTOService {
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         userDTO.setUsername(user.getUsername());
-        userDTO.setLicenseNo(user.getLicenseNo());
-        userDTO.setLicenseExpiry(user.getLicenseExpiry());
         userDTO.setPhoneNo(user.getPhoneNo());
         userDTO.setEmail(user.getEmail());
 
-        List<AddressDTO> addresses = user.getAddresses().stream().map(address -> {
-            AddressDTO addressDTO = new AddressDTO();
-            addressDTO.setId(address.getId());
-            addressDTO.setShopNo(address.getShopNo());
-            addressDTO.setArea(address.getArea());
-            addressDTO.setCity(address.getCity());
-            addressDTO.setState(address.getState());
-            addressDTO.setPincode(address.getPincode());
-            return addressDTO;
+        List<ShopDTO> shops = user.getShops().stream().map(shop -> {
+            ShopDTO shopDTO = new ShopDTO();
+            shopDTO.setId(shop.getId());
+            shopDTO.setShopName(shop.getShopName());
+            shopDTO.setShopNo(shop.getShopNo());
+            shopDTO.setLicenseNo(shop.getLicenseNo());
+            shopDTO.setLicenseExpiry(shop.getLicenseExpiry());
+            shopDTO.setShopPhoneNumber(shop.getShopPhoneNumber());
+            shopDTO.setArea(shop.getArea());
+            shopDTO.setCity(shop.getCity());
+            shopDTO.setState(shop.getState());
+            shopDTO.setPincode(shop.getPincode());
+            return shopDTO;
         }).collect(Collectors.toList());
 
-        userDTO.setAddresses(addresses);
+        userDTO.setShops(shops);
         return userDTO;
     }
 

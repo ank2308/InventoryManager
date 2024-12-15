@@ -9,7 +9,7 @@ import SalesForm from "./components/SalesForm";
 import AddUserForm from "./components/AddUserForm";
 import AddBrandTypePage from "./components/AddBrandType";
 import LoginPage from "./pages/LoginPage";
-import AddUserss from "./pages/AddUserss";
+import AddUsers from "./pages/AddUsers";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
@@ -123,7 +123,7 @@ const AppContent = () => {
                     path="/addAppUser"
                     element={
                         <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-                            <AddUserss />
+                            <AddUsers />
                         </PrivateRoute>
                     }
                 />

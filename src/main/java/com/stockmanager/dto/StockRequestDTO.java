@@ -14,6 +14,7 @@ import java.util.Date;
 @Getter
 public class StockRequestDTO {
     private Long userId;
+    private Long shopId;
     private DateRangeType selectedDateRange;
     private Date startDate; // Only used for CUSTOM range
     private Date endDate;

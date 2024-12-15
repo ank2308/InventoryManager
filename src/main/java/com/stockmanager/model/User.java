@@ -27,12 +27,6 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "license_no", nullable = false)
-    private String licenseNo;
-
-    @Column(name = "license_expiry", nullable = false)
-    private Date licenseExpiry;
-
     @Column(name = "phone_no", nullable = false)
     private String phoneNo;
 
@@ -41,11 +35,11 @@ public class User {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "user_address_mapping",
+            name = "user_shop_mapping",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id")
+            inverseJoinColumns = @JoinColumn(name = "shop_id")
     )
     @JsonManagedReference
     @JsonProperty
-    private List<Address> addresses;
+    private List<Shop> shops;
 }

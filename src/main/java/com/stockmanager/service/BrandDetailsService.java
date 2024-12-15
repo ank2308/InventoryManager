@@ -100,15 +100,15 @@ public class BrandDetailsService {
         return brandDetailsRepository.findAllBrandTypes();
     }
 
-    public List<String> getAllBrandTypesByUserId(Long userId) {
-        List<StockSale> stockSales = stockSaleDataService.findAllByUserIdAndTotalItemsGreaterThanZero(userId);
+    public List<String> getAllBrandTypesByShopId(Long shopId) {
+        List<StockSale> stockSales = stockSaleDataService.findAllByShopIdAndTotalItemsGreaterThanZero(shopId);
         List<String> brandTypeList = new ArrayList<>();
         stockSales.stream().map(StockSale::getBrandType).distinct().forEach(brandTypeList::add);
         return brandTypeList;
     }
 
-    public List<String> getAllBrandNamesByUserIdByBrandType(Long userId, String brandType) {
-         return stockSaleDataService.findAllByUserIdAndBrandTypeAndTotalItemsLessThanZero(userId, brandType);
+    public List<String> getAllBrandNamesByShopIdByBrandType(Long shopId, String brandType) {
+         return stockSaleDataService.findAllByShopIdAndBrandTypeAndTotalItemsLessThanZero(shopId, brandType);
     }
 
     public List<String> getAllBrandTypes() {

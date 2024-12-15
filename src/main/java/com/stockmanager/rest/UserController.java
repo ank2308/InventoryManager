@@ -44,7 +44,7 @@ public class UserController {
     // Fetch full details of a specific user, including addresses
     @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
-        User user = userDataService.getUserWithAddresses(userId);
+        User user = userDataService.getUserWithShops(userId);
         UserDTO userDTO = userDTOService.toUserDTO(user);
 
         return ResponseEntity.ok(userDTO);

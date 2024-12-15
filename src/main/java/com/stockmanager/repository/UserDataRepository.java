@@ -24,8 +24,8 @@ public interface UserDataRepository extends JpaRepository<User, Long> {
     Page<User> findAll(Pageable pageable);
 
     // Fetch a user along with their addresses
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.addresses WHERE u.id = :id")
-    Optional<User> findByIdWithAddresses(Long id);
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.shops WHERE u.id = :id")
+    Optional<User> findByIdWithShops(Long id);
 
     @Query("SELECT u FROM User u WHERE u.username NOT IN (SELECT a.username FROM AppUser a)")
     List<User> findUsersWithoutAppUser();

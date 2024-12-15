@@ -14,5 +14,5 @@ public class UserDTO {
     private Date licenseExpiry;
     private String phoneNo;
     private String email;
-    private List<AddressDTO> addresses;
+    private List<ShopDTO> shops;
 }

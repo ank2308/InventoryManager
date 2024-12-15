@@ -51,15 +51,15 @@ public class StockController {
 
     // API to fetch all quantites (distinct)
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/types/{brandType}/{userId}/{brandName}")
-    public  List<SaleQuantityDTO> getAllQuantitiesByUserIdByBrandTypeByBrandName(@PathVariable String brandType, @PathVariable Long userId, @PathVariable String brandName) {
-        return stockDataService.getAllQuantitiesByUserIdByBrandTypeByBrandName(userId, brandType, brandName);
+    @GetMapping("/types/{brandType}/{shopId}/{brandName}")
+    public  List<SaleQuantityDTO> getAllQuantitiesByUserIdByBrandTypeByBrandName(@PathVariable String brandType, @PathVariable Long shopId, @PathVariable String brandName) {
+        return stockDataService.getAllQuantitiesByShopIdByBrandTypeByBrandName(shopId, brandType, brandName);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/available-stocks/{userId}")
-    public List<CurrentStockDetails> getAvailableStockDetails(@PathVariable Long userId) {
-        List<CurrentStockDetails> currenStockDetails = saleDataService.findAvailabStock(userId);
+    @GetMapping("/available-stocks/{shopId}")
+    public List<CurrentStockDetails> getAvailableStockDetails(@PathVariable Long shopId) {
+        List<CurrentStockDetails> currenStockDetails = saleDataService.findAvailabStock(shopId);
         return currenStockDetails;
     }
 

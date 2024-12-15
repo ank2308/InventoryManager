@@ -20,8 +20,8 @@ public class StockSaleDataService {
     @Autowired
     BrandQuantityMappingRepository brandQuantityMappingRepository;
 
-    public StockSale getStockSaleByUserIdAndBrandQuantityId(Long userId, Long brandQuantityId) {
-        return stockSaleRepository.findStockSaleByUserIdAndBrandQuantityId(userId, brandQuantityId);
+    public StockSale getStockSaleByShopIdAndBrandQuantityId(Long userId, Long brandQuantityId) {
+        return stockSaleRepository.findStockSaleByShopIdAndBrandQuantityId(userId, brandQuantityId);
     }
 
     public boolean saveStockSale(StockSale stockSale){
@@ -34,25 +34,25 @@ public class StockSaleDataService {
         return true;
     }
 
-    public StockSale getStockSaleByUserIdAndBrandNameAndBrandType(Long userId, String brandName, String brandType) {
-        return stockSaleRepository.findStockSaleByUserIdAndBrandNameAndBrandType(userId, brandName, brandType);
+    public StockSale getStockSaleByShopIdAndBrandNameAndBrandType(Long shopId, String brandName, String brandType) {
+        return stockSaleRepository.findStockSaleByShopIdAndBrandNameAndBrandType(shopId, brandName, brandType);
     }
 
-    public List<StockSale> findAllByUserIdAndTotalItemsGreaterThanZero(Long userId) {
-        return stockSaleRepository.findAllByUserIdAndTotalItemsGreaterThanZero(userId);
+    public List<StockSale> findAllByShopIdAndTotalItemsGreaterThanZero(Long shopId) {
+        return stockSaleRepository.findAllByShopIdAndTotalItemsGreaterThanZero(shopId);
     }
 
-    public List<String> findAllByUserIdAndBrandTypeAndTotalItemsLessThanZero(Long userId, String brandType) {
-        return stockSaleRepository.findAllBrandNamesByUserIdAndBrandTypeAndTotalItemsGreaterThanZero(userId, brandType);
+    public List<String> findAllByShopIdAndBrandTypeAndTotalItemsLessThanZero(Long shopId, String brandType) {
+        return stockSaleRepository.findAllBrandNamesByShopIdAndBrandTypeAndTotalItemsGreaterThanZero(shopId, brandType);
     }
 
-    public List<Long> findAllBrandQuantityByUserIdAndBrandTypeAndBrandNameAndTotalItemsGreaterThanZero(Long userId, String brandType, String brandName) {
-        return stockSaleRepository.findAllBrandQuantityIdByUserIdAndBrandTypeAndBrandNameAndTotalItemsGreaterThanZero(userId, brandType, brandName);
+    public List<Long> findAllBrandQuantityByShopIdAndBrandTypeAndBrandNameAndTotalItemsGreaterThanZero(Long shopId, String brandType, String brandName) {
+        return stockSaleRepository.findAllBrandQuantityIdByShopIdAndBrandTypeAndBrandNameAndTotalItemsGreaterThanZero(shopId, brandType, brandName);
 
     }
 
-    public List<CurrentStockDetails> findAvailabStock(Long userId) {
-        List<StockSale> stockSales =  stockSaleRepository.findAllUserId(userId);
+    public List<CurrentStockDetails> findAvailabStock(Long shopId) {
+        List<StockSale> stockSales =  stockSaleRepository.findAllShopId(shopId);
         List<CurrentStockDetails> currentStockDetails = new ArrayList<>();
         for (StockSale stockSale : stockSales) {
             QuantityNameWithMrpDTO obj = (QuantityNameWithMrpDTO) brandQuantityMappingRepository

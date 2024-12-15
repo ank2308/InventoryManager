@@ -16,7 +16,6 @@ export const addSale = async (saleData) => {
 export const getSales = async (requestData) => {
     try {
         const response = await axiosInstance.post("/api/sale/list", requestData);
-        console.log("Sales Data", response);
         return response.data;
     } catch (error) {
         console.error("Error fetching sales", error);

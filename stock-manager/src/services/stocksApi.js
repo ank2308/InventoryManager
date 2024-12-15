@@ -5,9 +5,7 @@ import axiosInstance from "./axiosInstance";
 // Fetch stock items
 export const fetchStockData = async (stockRequestDTO) => {
     try {
-        console.log("Stock Request DTO", stockRequestDTO);
         const response = await axiosInstance.post(`/api/stocks/details`, stockRequestDTO);
-        console.log("Stock Data {}", response);
         return response.data;
     } catch (error) {
         console.error("Error fetching stocks", error);
@@ -15,9 +13,9 @@ export const fetchStockData = async (stockRequestDTO) => {
 };
 
 // Fetch current stock items
-export const fetchCurrentStockData = async (userId) => {
+export const fetchCurrentStockData = async (shopId) => {
     try {
-        const response = await axiosInstance.get(`/api/stocks/available-stocks/${userId}`);
+        const response = await axiosInstance.get(`/api/stocks/available-stocks/${shopId}`);
         console.log("Stock Data {}", response);
         return response.data;
     } catch (error) {

@@ -2,10 +2,14 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { addStock, getBrandTypesForAvailableStocks } from '../services/stocksApi';
 import { getBrandTypes, getBrandNamesByType, getBrandDetailsById } from '../services/brandApi';
+import {fetchShopsByUserId } from '../services/shopsApi';
 import Select from 'react-select';
-import AuthContext from "../context/AuthContext";
 
 const StockForm = () => {
+    const [shops, setShops] = useState({});
+    const [selectedShop, setSelectedShop] = useState(null); 
+    const [user, setUser] = useState({});
+
     const [brandTypes, setBrandTypes] = useState([]);
     const [selectedBrandType, setSelectedBrandType] = useState(null);
 
@@ -15,10 +19,9 @@ const StockForm = () => {
     const [liquorQuantities, setLiquorQuantities] = useState([]);
     const [selectedLiquorQuantity, setSelectedLiquorQuantity] = useState(null);
 
-    const {user} = useContext(AuthContext);
-
     const [stockData, setStockData] = useState({
         userId: "",
+        shopId: "",
         brandName: '',
         brandType: '',
         crateInLot: 0,
@@ -32,8 +35,32 @@ const StockForm = () => {
     });
 
 
-
     const [isFormValid, setIsFormValid] = useState(false);
+
+    useEffect(() => {
+        const storedUser = JSON.parse(sessionStorage.getItem('user'));
+        setUser(storedUser);
+    }, []);
+
+    useEffect(() => {
+        const fetchShops = async (userId) => {
+            try {
+                const response = await fetchShopsByUserId(userId);
+                setShops(
+                    response.map((shop) => ({
+                        value: shop.id,
+                        label: `${shop.shopName}`,
+                        licenseNo: shop.licenseNo,
+                    })),
+                {});
+            } catch (error) {
+                console.error('Error fetching shops by userId:', error);
+            }
+        }
+        if(user && user.userId) {
+            fetchShops(user.userId)
+        }
+    }, [user])
 
     // Fetch brand types on component mount
     useEffect(() => {
@@ -47,6 +74,14 @@ const StockForm = () => {
         };
         fetchBrandTypes();
     }, []);
+
+    const handleShopChange = (selectedOption) => {
+        setSelectedShop(selectedOption);
+        setStockData((prevState) => ({
+            ...prevState,
+            shopId: selectedOption.value,
+        }));
+    };
 
     // Fetch brand names when a brand type is selected
     const handleBrandTypeChange = async (selectedOption) => {
@@ -112,31 +147,63 @@ const StockForm = () => {
             console.log("StockData", stockData);
             await addStock({ ...stockData, userId: user.userId });
             alert('Stock added successfully!');
-            setStockData({
-                brandName: '',
-                brandType: '',
-                crateInLot: 0,
-                itemsInCrate: 0,
-                quantityId: '',
-                brandQuantityId:'',
-                mrp: 0.0,
-                marginPrice: 0.0,
-                warehouseNumber: '',
-                dateEntered: '',
-            });
-            setSelectedBrandType(null);
-            setSelectedBrandName(null);
-            setSelectedLiquorQuantity(null);
+            resetForm();
         } catch (error) {
             console.error('Error adding stock:', error);
             alert('Failed to add stock.');
         }
     };
 
+    const resetForm = () => {
+        setStockData({
+            userId: '',
+            shopId: '',
+            brandName: '',
+            brandType: '',
+            crateInLot: 0,
+            itemsInCrate: 0,
+            quantityId: '',
+            brandQuantityId: '',
+            mrp: 0.0,
+            marginPrice: 0.0,
+            warehouseNumber: '',
+            dateEntered: '',
+        });
+        setSelectedShop(null);
+        setSelectedBrandType(null);
+        setSelectedBrandName(null);
+        setSelectedLiquorQuantity(null);
+    };
+
+
     return (
         <div className="card p-4">
             <h5>Add New Stock</h5>
             <form onSubmit={handleSubmit}>
+
+                {/* Shop Dropdown */}
+                <div className="form-group">
+                    <label>Select Shop</label>
+                    <Select
+                        options={shops}
+                        value={selectedShop}
+                        onChange={handleShopChange}
+                        placeholder="Select Shop"
+                    />
+                </div>
+
+                {/* Display selected shop details */}
+                {selectedShop && (
+                    <div className="form-group mt-2">
+                        <label>Shop Details:</label>
+                        <p>
+                            <strong>Shop Name:</strong> {selectedShop.label.split(' (')[0]} <br />
+                            <strong>License No:</strong> {selectedShop.licenseNo} <br />
+                            <strong>License Expiry:</strong> {selectedShop.licenseExpiry}
+                        </p>
+                    </div>
+                )}
+
                 {/* Brand Type Dropdown */}
                 <div className="form-group">
                     <label>Brand Type</label>

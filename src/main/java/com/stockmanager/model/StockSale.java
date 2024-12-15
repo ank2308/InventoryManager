@@ -21,6 +21,9 @@ public class StockSale {
     @Column(name = "User_Id", nullable = false)
     private Long userId;
 
+    @Column(name = "Shop_Id", nullable = false)
+    private Long shopId;
+
     @Column(name = "Total_Items_Left", nullable = false)
     private int totalItemsLeft;
 

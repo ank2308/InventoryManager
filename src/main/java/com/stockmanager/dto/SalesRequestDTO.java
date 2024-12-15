@@ -16,6 +16,7 @@ import java.util.Date;
 public class SalesRequestDTO {
 
     private Long userId;
+    private Long shopId;
     private DateRangeType selectedDateRange;
     private Date startDate; // Only used for CUSTOM range
     private Date endDate;   // Only used for CUSTOM range

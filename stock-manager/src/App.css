@@ -36,3 +36,9 @@
     transform: rotate(360deg);
   }
 }
+
+.btn-outline-secondary.active {
+  background-color: #6c757d; /* Bootstrap secondary color */
+  color: #fff; /* White text */
+  border-color: #6c757d; /* Match border with background */
+}

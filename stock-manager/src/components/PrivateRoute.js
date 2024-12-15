@@ -5,7 +5,7 @@ import AuthContext from "../context/AuthContext";
 const PrivateRoute = ({ children, allowedRoles }) => {
     const { user, hasRole, loading } = useContext(AuthContext);
 
-    console.log("AuthContext in PrivateRoute:", { user, loading });
+    // console.log("AuthContext in PrivateRoute:", { user, loading });
 
     if (loading) {
         // Show a loading indicator while AuthContext is being initialized

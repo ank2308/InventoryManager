@@ -2,8 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { fetchStockData } from '../services/stocksApi';
 import DatePicker from "react-datepicker";
+import { fetchShopsByUserId } from '../services/shopsApi';
+import Select from 'react-select';
+
 
 const StockList = () => {
+    const [shops, setShops] = useState({});
+    const [selectedShop, setSelectedShop] = useState(null); 
     const [user, setUser] = useState({});
     const [stockData, setStockData] = useState({
         warehouseNumber: "",
@@ -17,95 +22,122 @@ const StockList = () => {
     const [stocks, setStocks] = useState([stockData]);
     const [dateRange, setDateRange] = useState([null, null]);
     const [selectedFilter, setSelectedFilter] = useState("DAY");
+    const [selectedShopError, setSelectedShopError] = useState('')
 
     useEffect(() => {
         const storedUser = JSON.parse(sessionStorage.getItem('user'));
         setUser(storedUser);
     }, []);
 
-    // Fetch stock data on page load and state changes
     useEffect(() => {
-        if (user && selectedFilter !== 'CUSTOM') {
-            fetchStocksData(selectedFilter, dateRange);
+        const fetchShops = async (userId) => {
+            try {
+                const response = await fetchShopsByUserId(userId);
+                const shopOptions = response.map((shop) => ({
+                    value: shop.id,
+                    label: `${shop.shopName}`,
+                    licenseNo: shop.licenseNo,
+                }), {});
+                setShops(shopOptions);
+                // Set the default selected shop to the first shop
+                if (shopOptions.length > 0) {
+                    setSelectedShop(shopOptions[0]);
+                }
+            } catch (error) {
+                console.error('Error fetching shops by userId:', error);
+            }
         }
-    }, [user, selectedFilter, dateRange]);
+        if(user && user.userId) {
+            fetchShops(user.userId)
+        }
+    }, [user])
 
-    // Shared function to fetch stocks
-    const fetchStocksData = async (filter, range) => {
-        const requestData = {
-            userId: user?.userId,
-            selectedDateRange: filter,
-            startDate: range[0] ? range[0].toISOString() : null,
-            endDate: range[1] ? range[1].toISOString() : null,
-        };
+    
+    useEffect(()=>{
+        // Shared function to fetch stocks
+        const fetchStocksData = async () => {
+            const requestData = {
+                userId: user?.userId,
+                shopId: selectedShop?.value || shops[0]?.id,
+                selectedDateRange: selectedFilter,
+                startDate: dateRange[0] ? dateRange[0].toISOString() : null,
+                endDate: dateRange[1] ? dateRange[1].toISOString() : null,
+            };
 
-        try {
-            const response = await fetchStockData(requestData);
-            if (response.length > 0) {
-                const updatedStocks = response.map((stock) => ({
-                    userId: stock.id,
-                    warehouseNumber: stock.warehouseNumber,
-                    brandName: stock.brandName,
-                    brandType: stock.brandType,
-                    quantity: stock.liquorQuantity,
-                    totalItemsLeft: stock.totalItemsLeft,
-                    totalLiquorQuantityLeft: stock.totalLiquorQuantityLeft,
-                    totalPrice: stock.totalPrice,
-                }));
-                setStocks(updatedStocks);
-            } else {
+            try {
+                const response = await fetchStockData(requestData);
+                if (response.length > 0) {
+                    const updatedStocks = response.map((stock) => ({
+                        userId: stock.id,
+                        warehouseNumber: stock.warehouseNumber,
+                        brandName: stock.brandName,
+                        brandType: stock.brandType,
+                        quantity: stock.liquorQuantity,
+                        totalItemsLeft: stock.totalItemsLeft,
+                        totalLiquorQuantityLeft: stock.totalLiquorQuantityLeft,
+                        totalPrice: stock.totalPrice,
+                    }));
+                    setStocks(updatedStocks);
+                } else {
+                    setStocks([]);
+                }
+            } catch (error) {
+                console.error('Error fetching stocks:', error);
                 setStocks([]);
             }
-        } catch (error) {
-            console.error('Error fetching stocks:', error);
-            setStocks([]);
-        }
-    };
+        };
 
-    // Trigger fetch for custom date range
-    const fetchCustomStockData = () => {
-        if (selectedFilter === 'CUSTOM') {
-            fetchStockData('CUSTOM', dateRange);
+        if (!selectedShop) {
+            setSelectedShopError("At least one shop should we selected");
+            return;
+        } else {
+            setSelectedShopError('');
         }
-    };
 
-    const handleFilterClick = (filter) => {
-        setSelectedFilter(filter);
-        if (filter !== 'CUSTOM') {
-            setDateRange([null, null]); // Reset custom date range for non-custom filters
+        if (selectedShop && selectedShop?.value){
+            fetchStocksData()
         }
-    };
+    }, [selectedShop, shops, selectedFilter, dateRange])
 
     const handleDateChange = (dates) => {
         setDateRange(dates);
+    };
+
+    const handleShopChange = (selectedOption) => {
+        setSelectedShop(selectedOption);
+        setStockData((prevState) => ({
+            ...prevState,
+            shopId: selectedOption.value,
+        }));
     };
 
     return (
         <div className="container">
             <h4>Stock Details</h4>
 
-            <div className="mb-3">
+            {/* Filter Selection */}
+            <div className="mb-3 d-flex">
                 <button
-                    className="btn btn-secondary"
-                    onClick={() => handleFilterClick('DAY')}
+                    className={`btn btn-outline-secondary ${selectedFilter === 'DAY' ? 'active' : ''} mx-2`}
+                    onClick={() => { setSelectedFilter('DAY'); }}
                 >
                     Today
                 </button>
                 <button
-                    className="btn btn-secondary"
-                    onClick={() => handleFilterClick('WEEK')}
+                    className={`btn btn-outline-secondary ${selectedFilter === 'WEEK' ? 'active' : ''}mx-2`}
+                    onClick={() => { setSelectedFilter('WEEK'); }}
                 >
                     Last Week
                 </button>
                 <button
-                    className="btn btn-secondary"
-                    onClick={() => handleFilterClick('MONTH')}
+                    className={`btn btn-outline-secondary ${selectedFilter === 'MONTH' ? 'active' : ''}mx-2`}
+                    onClick={() => { setSelectedFilter('MONTH'); }}
                 >
                     Last Month
                 </button>
                 <button
-                    className="btn btn-secondary"
-                    onClick={() => handleFilterClick('CUSTOM')}
+                    className={`btn btn-outline-secondary ${selectedFilter === 'CUSTOM' ? 'active' : ''}mx-2`}
+                    onClick={() => { setSelectedFilter('CUSTOM'); }}
                 >
                     Custom Date Range
                 </button>
@@ -122,11 +154,32 @@ const StockList = () => {
                         selectsRange
                         inline
                     />
-                    <button className="btn btn-primary mt-3" onClick={fetchCustomStockData}>
-                        Fetch Stock
-                    </button>
                 </div>
             )}
+
+            {/* Shop Dropdown */}
+            <div className="form-group">
+                <label>Select Shop</label>
+                <Select
+                    options={shops}
+                    value={selectedShop}
+                    onChange={handleShopChange}
+                    placeholder="Select Shop"
+                />
+            </div>
+
+            {/* Display selected shop details */}
+            {selectedShop && (
+                <div className="form-group mt-2">
+                    <label>Shop Details:</label>
+                    <p>
+                        <strong>Shop Name:</strong> {selectedShop.label.split(' (')[0]} <br />
+                        <strong>License No:</strong> {selectedShop.licenseNo} <br />
+                    </p>
+                </div>
+            )}
+            {selectedShopError && <p style={{ color: 'red' }}>{selectedShopError}</p>} {/* Display error if any */}
+
 
             <table className="table table-bordered table-striped">
                 <thead className="thead-dark">
